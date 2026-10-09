@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+@theme {
+  --color-rkm-forest: #073d2c;
+  --color-rkm-leaf: #638b45;
+  --color-rkm-gold: #c7a43c;
+  --color-rkm-clay: #b85d3d;
+  --color-rkm-cream: #ede2c9;
+  --color-rkm-ink: #17352b;
+}
+
+@layer base {
+  html { scroll-behavior: smooth; }
+  body { margin: 0; font-family: Inter, ui-sans-serif, system-ui, sans-serif; }
+  button, input, select, textarea { font: inherit; }
+}
+
+@layer components {
+  .rkm-gradient-text { background: linear-gradient(90deg, #073d2c, #c7a43c); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .rkm-glass { background: rgb(255 253 247 / 72%); backdrop-filter: blur(16px); }
+}
