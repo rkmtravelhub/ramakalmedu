@@ -552,8 +552,8 @@ function App() {
         <section className="hero" id="home">
           <div className="hero-frame">
             <Photo
-              name="20260927_070308"
-              alt="Golden morning mist over the hills of Ramakalmedu"
+              name="ramakalmedu_rock_tamilnadu_view"
+              alt="The Ramakkal rock above the patchwork fields of Tamil Nadu"
               sizes="100vw"
               eager
               className="hero-img"
