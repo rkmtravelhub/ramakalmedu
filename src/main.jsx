@@ -1,175 +1,308 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
-import "./tailwind.css";
+import {
+  ArrowLeft,
+  ArrowRight,
+  ArrowUpRight,
+  BedDouble,
+  Bus,
+  Car,
+  Check,
+  Compass,
+  Flame,
+  Grape,
+  House,
+  Info,
+  Leaf,
+  Mail,
+  MapPin,
+  Menu,
+  MessageCircle,
+  Minus,
+  Mountain,
+  Phone,
+  Plus,
+  ShieldCheck,
+  ShoppingBag,
+  ShowerHead,
+  Tent,
+  UtensilsCrossed,
+  Users,
+  Waves,
+  Wifi,
+  Wind,
+  X,
+} from "lucide-react";
+import { IMG } from "./imageMeta";
+import { LogoMark } from "./Logo";
 import "./styles.css";
-
-const A = "/images/";
 
 const CONTACT = "919074685552";
 const PHONE_DISPLAY = "+91 90746 85552";
+const MAPS_URL =
+  "https://www.google.com/maps/search/?api=1&query=Ramakalmedu%2C%20Idukki%2C%20Kerala";
 
-const gallery = [
-  ["RamaKalMedu_view.jpg", "Ramakalmedu viewpoint", "Mountain panorama"],
-  ["RamaKalMedu_Nature_view.jpg", "Rock & valley", "Western Ghats landscape"],
-  [
-    "ramakalmedu_windmills_elevated_view.jpg",
-    "Windmills at sunset",
-    "Scenic Ramakalmedu",
-  ],
-  ["ramakalmedu_rock_view.jpg", "Ramakalmedu rock", "Signature landmark"],
-  ["ramakalmedu_tamilnadu_view.jpg", "Tamil Nadu panorama", "Valley views"],
-  ["ramakalmedu_offroad_view.jpg", "Off-road trail", "Adventure route"],
-  ["RamaKalMedu_Near_Vineyard.jpg", "Local vineyard", "Taste of the region"],
-  [
-    "ramakalmedu_kuravan_kurathi_statue.jpg",
-    "Kuravan & Kurathi",
-    "Local landmark",
-  ],
+/* ---------------------------------------------------------------
+   Responsive, lazy-loaded WebP image.
+   Every photo has an 800px and a 1600px version in /public/img.
+   --------------------------------------------------------------- */
+function Photo({ name, alt, sizes = "(max-width: 760px) 100vw, 50vw", eager = false, className = "" }) {
+  const meta = IMG[name];
+  const [w, h] = meta ? meta.s : [800, 600];
+  const srcSet = meta
+    ? `/img/${name}-800.webp ${meta.s[0]}w, /img/${name}-1600.webp ${meta.l[0]}w`
+    : undefined;
+  return (
+    <img
+      className={className}
+      src={`/img/${name}-800.webp`}
+      srcSet={srcSet}
+      sizes={sizes}
+      width={w}
+      height={h}
+      alt={alt}
+      loading={eager ? "eager" : "lazy"}
+      decoding={eager ? "sync" : "async"}
+      fetchPriority={eager ? "high" : "auto"}
+    />
+  );
+}
+
+/* ---------------------------------------------------------------
+   Content
+   --------------------------------------------------------------- */
+const nav = [
+  ["Home", "home"],
+  ["Explore", "explore"],
+  ["Experiences", "experiences"],
+  ["Stay", "stay"],
+  ["Facilities", "facilities"],
+  ["Gallery", "gallery"],
+  ["Team", "team"],
+  ["Contact", "contact"],
+];
+
+const audiences = [
+  "Tourist groups",
+  "Family trips",
+  "School & college tours",
+  "Corporate groups",
+  "Adventure groups",
+];
+
+const places = [
+  {
+    title: "Ramakkal Rock",
+    preset: "Tortoise Rock / local attraction",
+    tag: "Viewpoint",
+    img: "ramakalmedu_rock_view",
+    text: "The iconic rock and viewpoint at the heart of the Ramakalmedu landscape.",
+  },
+  {
+    title: "Tortoise Rock",
+    preset: "Tortoise Rock / local attraction",
+    tag: "Adventure",
+    img: "ramakalmedu_tortoise",
+    text: "Amappara / Tortoise Rock and its off-road route for adventure seekers.",
+  },
+  {
+    title: "Windmill Country",
+    preset: "Windmill / vineyard visit",
+    tag: "Scenic",
+    img: "ramakalmedu_windmills_elevated_view",
+    text: "The famous wind-swept highlands and surrounding wind farms.",
+  },
+  {
+    title: "Kuravan & Kurathi",
+    preset: "Tortoise Rock / local attraction",
+    tag: "Landmark",
+    img: "ramakalmedu_kuravan_kurathi_statue",
+    text: "The well-known statue overlooking the Tamil Nadu plains.",
+  },
+  {
+    title: "Off-road Trails",
+    preset: "Jeep safari",
+    tag: "Jeep Safari",
+    img: "ramakalmedu_offroad_view",
+    text: "Red-earth tracks and green hills — ideal for a local jeep safari.",
+  },
+  {
+    title: "Cumbum Vineyards",
+    preset: "Windmill / vineyard visit",
+    tag: "Day Trip",
+    img: "RamaKalMedu_Near_Vineyard",
+    text: "A nearby Tamil Nadu-side stop that fits into a longer day trip.",
+  },
+];
+
+const moods = {
+  "Nature Escape": {
+    img: "RamaKalMedu_Nature_view",
+    text: "Wide views, quiet moments and the feeling of being above the valleys.",
+  },
+  "Campfire Night": {
+    img: "20260927_065616",
+    text: "End the day slowly with warm food, stories, mountain air and a campfire.",
+  },
+  Adventure: {
+    img: "ramakalmedu_offroad_view",
+    text: "Take the scenic route with off-road trails, viewpoints and jeep safari possibilities.",
+  },
+  "Family Trip": {
+    img: "RamaKalMedu_view",
+    text: "A relaxed base for families who want views, comfort and easy local exploring.",
+  },
+  "Group Tour": {
+    img: "ramakalmedu_tamilnadu_view",
+    text: "Plan school, college, corporate and friends trips with practical support at the hub.",
+  },
+  "Relax & Stay": {
+    img: "RamaKalMedu_RKM_Travel_Hub",
+    text: "Freshen up, rest, eat well and enjoy the hills without rushing.",
+  },
+};
+
+const experienceCards = [
+  ["Refresh", "20260927_070308", "Arrive, freshen up and take a comfortable pause in the hills."],
+  ["Explore", "ramakalmedu_rock_elevated_rear_view", "Rocks, viewpoints, windmills, trails and valley panoramas."],
+  ["Experience", "ramakalmedu_tamilnadu_town_view", "Food, local culture, nature and the spirit of Idukki."],
+];
+
+const whyUs = [
+  {
+    title: "Built for group travel",
+    img: "RamaKalMedu_RKM_Travel_Hub",
+    text: "A convenient stop for tourist buses and vans, with clean toilets and bathrooms, FreshUp rooms and food for the whole group.",
+  },
+  {
+    title: "Stay your way",
+    img: "20260927_065616",
+    text: "Choose a dormitory, tent stay or homestay — and finish the evening around a campfire under the mountain sky.",
+  },
+  {
+    title: "Local adventures, sorted",
+    img: "ramakalmedu_offroad_view",
+    text: "Jeep safari booking support, Tortoise Rock, windmill and vineyard visits, plus tourist information to plan your day.",
+  },
+  {
+    title: "Comfort & peace of mind",
+    img: "ramakalmedu_tamilnadu_view",
+    text: "Free Wi-Fi, power backup and security support for a smoother stop and stay.",
+  },
+];
+
+const stays = [
+  ["Dormitory", "Group-friendly, practical accommodation for tours, schools and families.", "RamaKalMedu_RKM_Travel_Hub"],
+  ["Tent Stay", "A closer-to-nature outdoor option, perfect with a campfire night.", "20260927_065544"],
+  ["Homestay", "A relaxed, local-style stay for travellers wanting a longer experience.", "RamaKalMedu_view"],
 ];
 
 const facilities = [
+  [ShowerHead, "FreshUp Rooms", "Clean bathrooms and toilets for groups, buses, vans and families."],
+  [BedDouble, "Dormitory Stay", "Practical group accommodation for travellers and school tours."],
+  [Tent, "Tent Stay", "Outdoor accommodation for a closer-to-nature experience."],
+  [Flame, "Campfire", "Relax around a campfire on a cool mountain evening."],
+  [Waves, "Swimming Pool", "Cool down after a day of exploring."],
+  [UtensilsCrossed, "RKM Café & Snacks", "Food, snacks and refreshments for travellers and tour groups."],
+  [Leaf, "Spices Shop", "Take a taste of Idukki's spices home with you."],
+  [ShoppingBag, "Galaxy Purchase Hub", "Home-made chocolates, toys, fancy items, spices and gifts."],
+  [Car, "Jeep Safari", "Off-road adventure support and safari booking enquiries."],
+  [House, "Homestay", "A local-style stay for a longer experience."],
+  [Wind, "Windmill Visit", "Explore the wind-swept highlands nearby."],
+  [Grape, "Vineyard Visit", "Add a Cumbum-side vineyard visit to your day trip."],
+  [Mountain, "Tortoise Rock", "Explore Tortoise Rock / Amappara and its off-road route."],
+  [Bus, "Bus & Van Support", "A convenient stop for tourist buses and group travel."],
+  [Info, "Tourist Information", "Local tips to help plan your Ramakalmedu visit."],
+  [Wifi, "Wi-Fi & Backup", "Free Wi-Fi, power backup and security."],
+];
+
+const dayPlans = {
+  "Half Day": [
+    ["08:00", "FreshUp & breakfast", "Start slowly at RKM Travel Hub."],
+    ["09:00", "Windmill country", "Take in the highland views."],
+    ["11:00", "Ramakkal Rock", "Enjoy the signature viewpoint."],
+    ["12:30", "Lunch & refresh", "Return for food and a comfortable pause."],
+  ],
+  "Full Day": [
+    ["06:00", "Sunrise", "Start with the cool mountain morning."],
+    ["08:00", "Breakfast & FreshUp", "Recharge at the hub."],
+    ["10:00", "Windmills & viewpoints", "Explore the highlands."],
+    ["13:00", "Lunch", "Pause and refuel."],
+    ["15:00", "Jeep / local adventure", "Choose an off-road experience."],
+    ["17:30", "Tortoise Rock / sunset", "Finish with a scenic view."],
+    ["19:00", "Campfire", "Slow down under the evening sky."],
+  ],
+};
+
+const gallery = [
+  ["RamaKalMedu_Nature_view_WM1", "Ramakalmedu panorama"],
+  ["ramakalmedu_rock_view", "Ramakalmedu rock"],
+  ["ramakalmedu_windmills", "Windmills on the ridge"],
+  ["ramakalmedu_tamilnadu_longview", "Tamil Nadu farmlands"],
+  ["20260927_070308", "Golden morning hills"],
+  ["ramakalmedu_tortoise", "Tortoise Rock"],
+  ["ramakalmedu_malamuzhakki_vezhambal", "Malamuzhakki Vezhambal sculpture"],
+  ["ramakalmedu_rock_tamilnadu_view", "Rock and valley view"],
+  ["20260927_065130", "Sky over the Ghats"],
+];
+
+const faqs = [
   [
-    "🚿",
-    "FreshUp Rooms",
-    "Clean bathrooms and toilets for tourist groups, buses, vans and families.",
+    "Who is RKM Travel Hub for?",
+    "Tourist groups, family trips, school and college tours, corporate teams and adventure groups. The hub is designed around the realities of group travel — including bus and van support.",
   ],
   [
-    "🛏️",
-    "Dormitory Stay",
-    "Practical group accommodation for travellers, school tours and families.",
+    "What stay options are available?",
+    "Dormitory stay for groups, tent stay for a closer-to-nature night, and homestay for a relaxed local experience. Tell us your date and group size and we'll confirm what suits you.",
   ],
   [
-    "⛺",
-    "Tent Stay",
-    "Outdoor accommodation for guests who want a closer-to-nature experience.",
+    "How far is Ramakalmedu?",
+    "Roughly 75 km from Thekkady, 100 km from Munnar, 130 km from Kottayam and 150 km from Kochi.",
   ],
   [
-    "🔥",
-    "Campfire",
-    "Relax around a campfire and enjoy the mountain evening with friends and family.",
+    "What should I pack?",
+    "Comfortable shoes, a light jacket, sunscreen, a water bottle, a camera, a power bank, rain protection — and a little extra time to enjoy the views.",
   ],
   [
-    "🏊",
-    "Swimming Pool",
-    "A leisure facility for guests and visitors to cool down after exploring.",
-  ],
-  [
-    "☕",
-    "Food Court",
-    "Food ordering and refreshments for travellers and tour groups.",
-  ],
-  [
-    "🌿",
-    "Spices Shop",
-    "Discover Kerala spices and take a taste of Idukki home with you.",
-  ],
-  [
-    "🛍️",
-    "Fancy Shop",
-    "Convenient travel, gift and small shopping needs at the hub.",
-  ],
-  [
-    "🚙",
-    "Jeep Safari",
-    "Local off-road adventure support and jeep safari booking enquiries.",
-  ],
-  [
-    "🏡",
-    "Homestay",
-    "A local-style stay option for travellers wanting a longer experience.",
-  ],
-  [
-    "🌬️",
-    "Windmill Visit",
-    "Explore the wind-swept highlands and nearby windmill country.",
-  ],
-  [
-    "🍇",
-    "Vineyard Visit",
-    "Plan a nearby Cumbum-side vineyard visit as part of a longer day trip.",
-  ],
-  [
-    "🪨",
-    "Tortoise Rock",
-    "Explore Tortoise Rock / Amappara and its off-road route.",
-  ],
-  [
-    "🚌",
-    "Bus & Van Support",
-    "A convenient stop for tourist buses, vans and group travel.",
-  ],
-  [
-    "ℹ️",
-    "Tourist Information",
-    "Useful local information to help plan your Ramakalmedu visit.",
-  ],
-  [
-    "📶",
-    "Wi-Fi & Backup",
-    "Free Wi-Fi, power backup and security support for a smoother stay.",
+    "How do I book or enquire?",
+    `Send us a message on WhatsApp at ${PHONE_DISPLAY}, or use the enquiry form on this page. The team will get back to you to confirm details.`,
   ],
 ];
 
-const experiences = [
+/* Team — details from the printed RKM visiting cards.
+   To add a photo later: save it as public/img/team/<id>.webp and set photo: true. */
+const team = [
   {
-    no: "01",
-    title: "Refresh",
-    image: "20260927_070308.jpeg",
-    text: "Arrive, freshen up and take a comfortable pause in the hills.",
+    id: "anjith",
+    name: "Anjith Chatterji",
+    role: "Dormitory & FreshUp · Galaxy Purchase Hub",
+    phones: ["+91 73560 05249"],
+    photo: false,
   },
   {
-    no: "02",
-    title: "Stay",
-    image: "RamaKalMedu_RKM_Travel_Hub.jpeg",
-    text: "Choose a practical stay for families, schools, groups and travellers.",
+    id: "sijo",
+    name: "Sijo Kunnumpurathu",
+    role: "Offroad Jeep Safari",
+    phones: ["+91 89435 75887"],
+    photo: false,
   },
   {
-    no: "03",
-    title: "Explore",
-    image: "ramakalmedu_rock_elevated_rear_view.jpg",
-    text: "Discover rocks, viewpoints, windmills, trails and valley panoramas.",
-  },
-  {
-    no: "04",
-    title: "Experience",
-    image: "RamaKalMedu_Near_Vineyard.jpg",
-    text: "Slow down with food, local culture, nature and the spirit of Idukki.",
+    id: "naufal",
+    name: "Naufal KI",
+    role: "Spices · Offroad Jeep Safari",
+    phones: ["+91 62829 98798", "+91 99614 92251"],
+    photo: false,
   },
 ];
 
-const highlights = [
-  "Ideal for tourist groups and family trips",
-  "School and college tours",
-  "Corporate and adventure groups",
-  "Jeep safari booking support",
-  "Tourist information",
-  "Clean toilets and bathrooms",
-  "Free Wi-Fi",
-  "Power backup and security",
-];
-
-const nearbyPlaces = [
-  [
-    "Ramakkal Rock",
-    "ramakalmedu_rock_view.jpg",
-    "The iconic rock and viewpoint associated with the Ramakalmedu landscape.",
-  ],
-  [
-    "Tortoise Rock",
-    "ramakalmedu_tortoise.jpg",
-    "Amappara / Tortoise Rock and its off-road route for adventure seekers.",
-  ],
-  [
-    "Windmill Country",
-    "ramakalmedu_windmills.jpg",
-    "The famous wind-swept highlands and surrounding wind farms.",
-  ],
-  [
-    "Cumbum Vineyards",
-    "RamaKalMedu_Near_Vineyard.jpg",
-    "A nearby Tamil Nadu-side destination that can be included in a longer day trip.",
-  ],
-];
+const digits = (p) => p.replace(/[^0-9]/g, "");
+const initials = (n) =>
+  n
+    .split(" ")
+    .map((w) => w[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
 
 const enquiryOptions = [
   "Stay",
@@ -187,479 +320,381 @@ const enquiryOptions = [
   "Other enquiry",
 ];
 
+/* ---------------------------------------------------------------
+   Small building blocks
+   --------------------------------------------------------------- */
+function Tag({ children, light = false }) {
+  return <span className={`tag ${light ? "tag-light" : ""}`}>{children}</span>;
+}
+
+function ArrowBtn({ children, onClick, variant = "dark", type = "button", href }) {
+  const inner = (
+    <>
+      <span>{children}</span>
+      <i aria-hidden="true">
+        <ArrowUpRight size={16} strokeWidth={2.2} />
+      </i>
+    </>
+  );
+  if (href) {
+    return (
+      <a className={`arrow-btn ${variant}`} href={href} target="_blank" rel="noopener noreferrer">
+        {inner}
+      </a>
+    );
+  }
+  return (
+    <button className={`arrow-btn ${variant}`} type={type} onClick={onClick}>
+      {inner}
+    </button>
+  );
+}
+
+function SectionHead({ tag, title, text, center = false }) {
+  return (
+    <div className={`section-head ${center ? "center" : ""}`}>
+      <div>
+        {tag && <Tag>{tag}</Tag>}
+        <h2>{title}</h2>
+      </div>
+      {text && <p>{text}</p>}
+    </div>
+  );
+}
+
+/* ---------------------------------------------------------------
+   App
+   --------------------------------------------------------------- */
 function App() {
+  const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [bookingOpen, setBookingOpen] = useState(false);
-  const [activeImage, setActiveImage] = useState(null);
-
-  const [activeExperience, setActiveExperience] = useState("Nature Escape");
-
-  const [dayType, setDayType] = useState("Full Day");
-
+  const [lightbox, setLightbox] = useState(null);
+  const [mood, setMood] = useState("Nature Escape");
   const [stayType, setStayType] = useState("Dormitory");
-
-  const [enquiryOpen, setEnquiryOpen] = useState(false);
-
-  const [selectedEnquiries, setSelectedEnquiries] = useState([]);
-
-  const enquiryRef = useRef(null);
+  const [dayType, setDayType] = useState("Full Day");
+  const [openFaq, setOpenFaq] = useState(0);
+  const [selected, setSelected] = useState([]);
+  const [formError, setFormError] = useState("");
+  const railRef = useRef(null);
   const videoRef = useRef(null);
 
-  const nav = useMemo(
-    () => [
-      ["Home", "home"],
-      ["Stay", "stay"],
-      ["Experiences", "experiences"],
-      ["Explore", "explore"],
-      ["Gallery", "gallery"],
-      ["Facilities", "facilities"],
-      ["Contact", "contact"],
-    ],
-    [],
-  );
-
-  /*
-   * Close enquiry dropdown when clicking outside.
-   */
   useEffect(() => {
-    const handleOutsideClick = (event) => {
-      if (enquiryRef.current && !enquiryRef.current.contains(event.target)) {
-        setEnquiryOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleOutsideClick);
-
-    return () => {
-      document.removeEventListener("mousedown", handleOutsideClick);
-    };
+    const onScroll = () => setScrolled(window.scrollY > 40);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  /*
-   * Close dropdown when modal closes.
-   */
+  // Only load and play the film when it scrolls into view.
   useEffect(() => {
-    if (!bookingOpen) {
-      setEnquiryOpen(false);
-    }
-  }, [bookingOpen]);
+    const v = videoRef.current;
+    if (!v || !("IntersectionObserver" in window)) return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          if (!v.src) v.src = "/img/ramakalmedu-film.mp4";
+          v.play().catch(() => {});
+        } else {
+          v.pause();
+        }
+      },
+      { rootMargin: "200px" },
+    );
+    io.observe(v);
+    return () => io.disconnect();
+  }, []);
+
+  // Lock page scroll and allow Esc to close overlays.
+  useEffect(() => {
+    const locked = bookingOpen || lightbox !== null || menuOpen;
+    document.body.style.overflow = locked ? "hidden" : "";
+    const onKey = (e) => {
+      if (e.key === "Escape") {
+        setBookingOpen(false);
+        setLightbox(null);
+        setMenuOpen(false);
+      }
+      if (lightbox !== null && e.key === "ArrowRight") setLightbox((i) => (i + 1) % gallery.length);
+      if (lightbox !== null && e.key === "ArrowLeft") setLightbox((i) => (i - 1 + gallery.length) % gallery.length);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [bookingOpen, lightbox, menuOpen]);
 
   const scrollTo = (id) => {
-    document.getElementById(id)?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
-
     setMenuOpen(false);
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
-  /*
-   * ---------------------------------------------------------
-   * ENQUIRY MULTI-SELECT
-   * ---------------------------------------------------------
-   */
-
-  const toggleEnquiry = (option) => {
-    setSelectedEnquiries((current) => {
-      if (current.includes(option)) {
-        return current.filter((item) => item !== option);
-      }
-
-      return [...current, option];
-    });
-  };
-
-  const removeEnquiry = (option) => {
-    setSelectedEnquiries((current) =>
-      current.filter((item) => item !== option),
-    );
-  };
-
-  /*
-   * ---------------------------------------------------------
-   * WHATSAPP
-   * ---------------------------------------------------------
-   */
-
-  const buildEnquiry = (form) => {
-    if (!(form instanceof HTMLFormElement)) {
-      return {
-        subject: "RKM Travel Hub Enquiry",
-        body: "Hi RKM Travel Hub! I would like to know more about visiting Ramakalmedu.",
-      };
+  const openBooking = (preset) => {
+    if (typeof preset === "string") {
+      setSelected((cur) => (cur.includes(preset) ? cur : [...cur, preset]));
     }
-
-    const data = new FormData(form);
-
-    const name = String(data.get("name") || "").trim();
-
-    const phone = String(data.get("phone") || "").trim();
-
-    const date = String(data.get("date") || "").trim();
-
-    const guests = String(data.get("guests") || "").trim();
-
-    const message = String(data.get("message") || "").trim();
-
-    const enquiries = data
-      .getAll("enquiry")
-      .map((value) => String(value).trim())
-      .filter(Boolean);
-
-    const enquiryText =
-      enquiries.length > 0 ? enquiries.join(", ") : "General Enquiry";
-
-    const subject = `RKM Travel Hub Enquiry - ${enquiryText}`;
-
-    const body = [
-      "Hi RKM Travel Hub!",
-      "",
-      `Name: ${name || "Not specified"}`,
-      `Phone / WhatsApp: ${phone || "Not specified"}`,
-      `Enquiry: ${enquiryText}`,
-      `Preferred date: ${date || "Not specified"}`,
-      `Guests: ${guests || "Not specified"}`,
-      "",
-      "Message:",
-      message || "No additional message.",
-    ].join("\n");
-
-    return {
-      subject,
-      body,
-    };
-  };
-
-  const openWhatsApp = (form = null) => {
-    let message =
-      "Hi RKM Travel Hub! I would like to know more about visiting Ramakalmedu.";
-
-    /*
-     * Prevent the React click event from being
-     * accidentally passed into FormData().
-     */
-    if (form instanceof HTMLFormElement) {
-      const { body } = buildEnquiry(form);
-
-      message = body;
-    }
-
-    const whatsappUrl =
-      `https://wa.me/${CONTACT}` + `?text=${encodeURIComponent(message)}`;
-
-    window.open(whatsappUrl, "_blank", "noopener,noreferrer");
-  };
-
-  /*
-   * ---------------------------------------------------------
-   * FORM SUBMIT
-   * ---------------------------------------------------------
-   */
-
-  const handleBookingSubmit = (e) => {
-    e.preventDefault();
-
-    const form = e.currentTarget;
-
-    if (!(form instanceof HTMLFormElement)) {
-      return;
-    }
-
-    if (selectedEnquiries.length === 0) {
-      setEnquiryOpen(true);
-
-      alert("Please select at least one enquiry option.");
-
-      return;
-    }
-
-    openWhatsApp(form);
-  };
-
-  /*
-   * ---------------------------------------------------------
-   * OPEN BOOKING
-   * ---------------------------------------------------------
-   */
-
-  const openBooking = () => {
+    setFormError("");
     setBookingOpen(true);
   };
 
+  const openWhatsApp = (message) => {
+    const text =
+      typeof message === "string"
+        ? message
+        : "Hi RKM Travel Hub! I would like to know more about visiting Ramakalmedu.";
+    window.open(`https://wa.me/${CONTACT}?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
+  };
+
+  const toggleOption = (opt) => {
+    setFormError("");
+    setSelected((cur) => (cur.includes(opt) ? cur.filter((x) => x !== opt) : [...cur, opt]));
+  };
+
+  const submitBooking = (e) => {
+    e.preventDefault();
+    if (selected.length === 0) {
+      setFormError("Please select at least one option.");
+      return;
+    }
+    const d = new FormData(e.currentTarget);
+    const get = (k) => String(d.get(k) || "").trim();
+    const body = [
+      "Hi RKM Travel Hub!",
+      "",
+      `Name: ${get("name") || "Not specified"}`,
+      `Phone / WhatsApp: ${get("phone") || "Not specified"}`,
+      `Enquiry: ${selected.join(", ")}`,
+      `Preferred date: ${get("date") || "Not specified"}`,
+      `Guests: ${get("guests") || "Not specified"}`,
+      "",
+      "Message:",
+      get("message") || "No additional message.",
+    ].join("\n");
+    openWhatsApp(body);
+  };
+
+  const scrollRail = (dir) => {
+    const el = railRef.current;
+    if (!el) return;
+    const card = el.querySelector(".place-card");
+    const step = card ? card.getBoundingClientRect().width + 20 : 320;
+    el.scrollBy({ left: dir * step, behavior: "smooth" });
+  };
+
   return (
-    <div className="site-shell min-h-screen bg-rkm-cream/30 text-rkm-ink">
-      {/* =====================================================
-          NAVBAR
-          ===================================================== */}
-
-      <header className="navbar sticky top-0 z-50">
-        <div className="container nav-inner">
-          <button
-            className="brand"
-            type="button"
-            onClick={() => scrollTo("home")}
-            aria-label="RamaKalMedu home"
-          >
-            <span className="brand-logo">
-              R<span>K</span>M
-            </span>
-
-            <span className="brand-copy">
-              <strong>
-                RamaKalMedu<span>.com</span>
-              </strong>
-
-              <small>RKM TRAVEL HUB · IDUKKI</small>
+    <div className="site">
+      {/* ============ HEADER ============ */}
+      <header className={`header ${scrolled ? "is-solid" : ""}`}>
+        <div className="header-inner">
+          <button className="brand" type="button" onClick={() => scrollTo("home")} aria-label="RamaKalMedu home">
+            <LogoMark size={42} className="brand-logo" />
+            <span className="brand-text">
+              <strong>RKM</strong>
+              <small>Travel Hub</small>
             </span>
           </button>
 
-          <button
-            className="menu-toggle"
-            type="button"
-            onClick={() => setMenuOpen(!menuOpen)}
-            aria-label={
-              menuOpen ? "Close navigation menu" : "Open navigation menu"
-            }
-            aria-expanded={menuOpen}
-            aria-controls="site-navigation"
-          >
-            {menuOpen ? "×" : "☰"}
-          </button>
-
-          <nav
-            id="site-navigation"
-            className={menuOpen ? "nav-links open" : "nav-links"}
-          >
+          <nav className="pill-nav" aria-label="Main">
             {nav.map(([label, id]) => (
               <button key={id} type="button" onClick={() => scrollTo(id)}>
                 {label}
               </button>
             ))}
-
-            <button className="nav-cta" type="button" onClick={openBooking}>
-              Enquire Now ↗
-            </button>
           </nav>
+
+          <div className="header-cta">
+            <ArrowBtn variant="light" onClick={() => openBooking()}>
+              Plan Your Visit
+            </ArrowBtn>
+          </div>
+
+          <button
+            className="menu-btn"
+            type="button"
+            onClick={() => setMenuOpen(true)}
+            aria-label="Open menu"
+            aria-expanded={menuOpen}
+          >
+            <Menu size={22} />
+          </button>
         </div>
       </header>
 
+      {/* Mobile menu */}
+      {menuOpen && (
+        <div className="mobile-menu" role="dialog" aria-modal="true" aria-label="Menu">
+          <div className="mobile-menu-top">
+            <span className="brand">
+              <LogoMark size={40} className="brand-logo on-dark" />
+              <span className="brand-text">
+                <strong>RKM</strong>
+                <small>Travel Hub</small>
+              </span>
+            </span>
+            <button type="button" onClick={() => setMenuOpen(false)} aria-label="Close menu">
+              <X size={24} />
+            </button>
+          </div>
+          <nav>
+            {nav.map(([label, id]) => (
+              <button key={id} type="button" onClick={() => scrollTo(id)}>
+                {label}
+                <ArrowRight size={18} />
+              </button>
+            ))}
+          </nav>
+          <ArrowBtn variant="light" onClick={() => { setMenuOpen(false); openBooking(); }}>
+            Plan Your Visit
+          </ArrowBtn>
+        </div>
+      )}
+
       <main>
-        {/* =====================================================
-            HERO
-            ===================================================== */}
-
-        <section id="home" className="hero">
-          <img
-            className="hero-image"
-            src={`${A}RamaKalMedu_Nature_view_WM1.jpg`}
-            alt="Ramakalmedu mountain landscape"
-          />
-
-          <div className="hero-overlay" />
-          <div className="hero-sun" />
-
-          <div className="container hero-content">
-            <div className="hero-copy">
-              <div className="eyebrow">
-                <span>●</span>
-                RAMAKALMEDU · IDUKKI, KERALA · WESTERN GHATS
-              </div>
-
+        {/* ============ HERO ============ */}
+        <section className="hero" id="home">
+          <div className="hero-frame">
+            <Photo
+              name="20260927_070308"
+              alt="Golden morning mist over the hills of Ramakalmedu"
+              sizes="100vw"
+              eager
+              className="hero-img"
+            />
+            <div className="hero-shade" />
+            <div className="hero-content">
+              <Tag light>
+                <MapPin size={14} /> Ramakalmedu · Idukki, Kerala
+              </Tag>
               <h1>
-                Where <em>Divinity</em>
+                Where Divinity
                 <br />
                 Meets Nature.
               </h1>
-
-              <p className="hero-lead">Refresh · Stay · Explore · Experience</p>
-
-              <p className="hero-text">
-                Your welcoming travel hub in Ramakalmedu — bringing refreshment,
-                rest, food, shopping and local experiences together for
-                families, tourist groups, school tours and adventure seekers.
+              <p>
+                Your welcoming travel hub in the Western Ghats — refreshment, rest, food, shopping and local
+                adventures for families, tourist groups, school tours and explorers.
               </p>
-
               <div className="hero-actions">
-                <button
-                  className="primary-btn transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl"
-                  type="button"
-                  onClick={openBooking}
-                >
-                  Plan Your Visit <span>↗</span>
+                <ArrowBtn variant="light" onClick={() => openBooking()}>
+                  Plan Your Visit
+                </ArrowBtn>
+                <button className="ghost-btn" type="button" onClick={() => scrollTo("explore")}>
+                  Explore Ramakalmedu
                 </button>
+              </div>
+              <div className="hero-chips">
+                {["Refresh", "Stay", "Explore", "Experience"].map((x, i) => (
+                  <span key={x}>
+                    {x}
+                    {i < 3 && <b aria-hidden="true">•</b>}
+                  </span>
+                ))}
+              </div>
+            </div>
+            <div className="hero-strip">
+              <span className="hero-strip-label">Ideal for</span>
+              {audiences.map((a) => (
+                <span key={a}>{a}</span>
+              ))}
+            </div>
+          </div>
+        </section>
 
-                <button
-                  className="ghost-btn transition-all duration-300 hover:-translate-y-0.5"
-                  type="button"
-                  onClick={() => scrollTo("gallery")}
-                >
-                  View the place ↓
-                </button>
+        {/* ============ ABOUT ============ */}
+        <section className="section about">
+          <div className="container narrow center-text">
+            <Tag>About Us</Tag>
+            <h2 className="display">Your gateway to authentic Ramakalmedu</h2>
+            <p className="lead">
+              RKM Travel Hub brings everything a hill trip needs into one welcoming place. Arrive and freshen up,
+              stay the night, eat well, pick up Kerala spices — and head out to rocks, windmills, viewpoints and
+              off-road trails. Come for the view. Stay for the experience.
+            </p>
+            <ArrowBtn onClick={() => scrollTo("contact")}>Contact for Details</ArrowBtn>
+          </div>
+        </section>
+
+        {/* ============ EXPLORE / DESTINATIONS ============ */}
+        <section className="section explore" id="explore">
+          <div className="container">
+            <SectionHead
+              tag="Destinations"
+              title={
+                <>
+                  From rocks to windmills:
+                  <br />
+                  discover Ramakalmedu
+                </>
+              }
+              text="Build your day around viewpoints, rock formations, windmill country, off-road routes and nearby attractions — all within reach of the hub."
+            />
+            <div className="rail" ref={railRef}>
+              {places.map((p) => (
+                <article className="place-card" key={p.title}>
+                  <Photo name={p.img} alt={p.title} sizes="(max-width: 760px) 80vw, 360px" />
+                  <div className="place-top">
+                    <Tag light>{p.tag}</Tag>
+                  </div>
+                  <div className="place-body">
+                    <h3>{p.title}</h3>
+                    <p>{p.text}</p>
+                    <button type="button" className="mini-btn" onClick={() => openBooking(p.preset)}>
+                      Plan a visit <ArrowUpRight size={14} />
+                    </button>
+                  </div>
+                </article>
+              ))}
+            </div>
+            <div className="rail-controls">
+              <button type="button" onClick={() => scrollRail(-1)} aria-label="Previous destinations">
+                <ArrowLeft size={18} />
+              </button>
+              <button type="button" onClick={() => scrollRail(1)} aria-label="Next destinations">
+                <ArrowRight size={18} />
+              </button>
+            </div>
+          </div>
+        </section>
+
+        {/* ============ EXPERIENCES ============ */}
+        <section className="section experiences" id="experiences">
+          <div className="container">
+            <div className="exp-grid">
+              <div className="exp-intro">
+                <Tag>Experiences</Tag>
+                <h2 className="display-sm">{mood}</h2>
+                <p>{moods[mood].text}</p>
+                <ArrowBtn onClick={() => openBooking()}>Plan this experience</ArrowBtn>
+              </div>
+              <div className="exp-feature">
+                <Photo key={mood} name={moods[mood].img} alt={mood} sizes="(max-width: 760px) 100vw, 40vw" className="fade-in" />
+                <Tag light>RKM Experience</Tag>
+              </div>
+              <div className="exp-picker">
+                <h3>Select experience type</h3>
+                <div className="chips">
+                  {Object.keys(moods).map((m) => (
+                    <button
+                      key={m}
+                      type="button"
+                      className={mood === m ? "active" : ""}
+                      onClick={() => setMood(m)}
+                      aria-pressed={mood === m}
+                    >
+                      {m}
+                    </button>
+                  ))}
+                </div>
+                <small>Every trip can be tailored to your group.</small>
               </div>
             </div>
 
-            <div className="hero-side-card">
-              <span className="pin">⌖</span>
-
-              <small>YOUR BASE IN</small>
-
-              <strong>Ramakalmedu</strong>
-
-              <span>Idukki · Kerala</span>
-
-              <div className="hero-card-image">
-                <img
-                  src={`${A}ramakalmedu_windmills_elevated_view.jpg`}
-                  alt="Ramakalmedu windmills"
-                />
-              </div>
-            </div>
-          </div>
-
-          <div className="hero-bottom">
-            <span>Scroll to explore</span>
-
-            <i>↓</i>
-
-            <span>Nature · Stay · Adventure</span>
-          </div>
-        </section>
-
-        {/* =====================================================
-            INTRO
-            ===================================================== */}
-
-        <section className="intro-strip">
-          <div className="container intro-inner">
-            <div>
-              <span>✦</span>
-
-              <strong>Experience Ramakalmedu</strong>
-
-              <span>✦</span>
-            </div>
-
-            <p>Like Never Before</p>
-          </div>
-        </section>
-
-        {/* =====================================================
-            STAY
-            ===================================================== */}
-
-        <section id="stay" className="section light-section">
-          <div className="container">
-            <div className="section-heading centered">
-              <span className="section-kicker">STAY YOUR WAY</span>
-
-              <h2>
-                Comfort in the <em>hills.</em>
-              </h2>
-
-              <p>
-                Come for the view. Stay for the experience. RKM Travel Hub gives
-                your group a practical place to pause, stay and start exploring.
-              </p>
-            </div>
-
-            <div className="stay-grid">
-              <article className="stay-card large">
-                <img
-                  src={`${A}RamaKalMedu_RKM_Travel_Hub.jpeg`}
-                  alt="RKM Travel Hub building"
-                />
-
-                <div className="stay-card-content">
-                  <span>01 · RKM TRAVEL HUB</span>
-
-                  <h3>Your comfortable base.</h3>
-
-                  <p>
-                    A purpose-built travel hub surrounded by the landscapes of
-                    Ramakalmedu.
-                  </p>
-
-                  <button type="button" onClick={openBooking}>
-                    Ask about stay →
-                  </button>
-                </div>
-              </article>
-
-              <article className="stay-card">
-                <img
-                  src={`${A}ramakalmedu_tamilnadu_town_view.jpg`}
-                  alt="Ramakalmedu town view"
-                />
-
-                <div className="stay-card-content">
-                  <span>02 · GROUP STAY</span>
-
-                  <h3>Stay together.</h3>
-
-                  <p>Simple accommodation designed around group travel.</p>
-
-                  <button type="button" onClick={openBooking}>
-                    Group enquiry →
-                  </button>
-                </div>
-              </article>
-
-              <article className="stay-card">
-                <img
-                  src={`${A}ramakalmedu_offroad_view.jpg`}
-                  alt="Ramakalmedu off-road trail"
-                />
-
-                <div className="stay-card-content">
-                  <span>03 · CAMP & ADVENTURE</span>
-
-                  <h3>Go closer to nature.</h3>
-
-                  <p>
-                    Pair your stay with camping, trails and local adventure.
-                  </p>
-
-                  <button type="button" onClick={() => scrollTo("experiences")}>
-                    Explore →
-                  </button>
-                </div>
-              </article>
-            </div>
-          </div>
-        </section>
-
-        {/* =====================================================
-            EXPERIENCES
-            ===================================================== */}
-
-        <section id="experiences" className="section dark-section">
-          <div className="container">
-            <div className="section-heading dark centered">
-              <span className="section-kicker">THE RKM WAY</span>
-
-              <h2>
-                More than a <em>stop.</em>
-              </h2>
-
-              <p>
-                Use the hub as the starting point for a relaxed, scenic and
-                memorable Ramakalmedu trip.
-              </p>
-            </div>
-
-            <div className="experience-grid">
-              {experiences.map((item) => (
-                <article className="experience-card" key={item.no}>
-                  <img src={`${A}${item.image}`} alt={item.title} />
-
-                  <div className="experience-overlay" />
-
-                  <div className="experience-copy">
-                    <span>{item.no}</span>
-
-                    <h3>{item.title}</h3>
-
-                    <p>{item.text}</p>
+            <div className="exp-cards">
+              {experienceCards.map(([title, img, text]) => (
+                <article key={title} className="exp-card">
+                  <Photo name={img} alt={title} sizes="(max-width: 760px) 100vw, 33vw" />
+                  <Tag light>{title}</Tag>
+                  <div>
+                    <h3>{title}</h3>
+                    <p>{text}</p>
                   </div>
                 </article>
               ))}
@@ -667,181 +702,116 @@ function App() {
           </div>
         </section>
 
-        {/* =====================================================
-            GALLERY
-            ===================================================== */}
-
-        <section id="gallery" className="section light-section gallery-section">
+        {/* ============ WHY RKM (timeline) ============ */}
+        <section className="section why">
           <div className="container">
-            <div className="section-heading">
-              <span className="section-kicker">SEE RAMAKALMEDU</span>
-
-              <h2>
-                The place is the <em>experience.</em>
-              </h2>
-
-              <p>
-                A selection from your photographs — viewpoints, rocks,
-                windmills, valleys, trails and local landmarks.
-              </p>
+            <SectionHead center tag="Why RKM" title="Why travellers choose RKM Travel Hub" />
+            <div className="why-timeline">
+              {whyUs.map((item, i) => (
+                <div className={`why-row ${i % 2 ? "flip" : ""}`} key={item.title}>
+                  <div className="why-media">
+                    <Photo name={item.img} alt={item.title} sizes="(max-width: 760px) 100vw, 40vw" />
+                  </div>
+                  <span className="why-dot" aria-hidden="true" />
+                  <div className="why-text">
+                    <span className="why-no">0{i + 1}</span>
+                    <h3>{item.title}</h3>
+                    <p>{item.text}</p>
+                  </div>
+                </div>
+              ))}
             </div>
+            <div className="why-cta">
+              <h3>Discover your perfect place</h3>
+              <p>Tell us your date and group size — we'll help you plan the stop, stay and adventure.</p>
+              <ArrowBtn onClick={() => openBooking()}>See Details</ArrowBtn>
+            </div>
+          </div>
+        </section>
 
-            <div className="gallery-grid">
-              {gallery.map(([src, title, tag], i) => (
+        {/* ============ STAY ============ */}
+        <section className="section stay" id="stay">
+          <div className="container">
+            <SectionHead
+              tag="Stay"
+              title="Choose the way you want to stay"
+              text="Come for the view. Stay for the experience. Pick a stay that suits your group and we'll confirm availability on WhatsApp."
+            />
+            <div className="stay-grid">
+              {stays.map(([name, text, img]) => (
                 <button
-                  className={`gallery-item gallery-${i + 1}`}
-                  key={src}
+                  key={name}
                   type="button"
-                  onClick={() =>
-                    setActiveImage({
-                      src,
-                      title,
-                      tag,
-                    })
-                  }
+                  className={`stay-card ${stayType === name ? "active" : ""}`}
+                  onClick={() => setStayType(name)}
+                  aria-pressed={stayType === name}
                 >
-                  <img src={`${A}${src}`} alt={title} loading="lazy" />
-
-                  <span className="gallery-caption">
-                    <small>{tag}</small>
-
-                    <strong>{title}</strong>
+                  <Photo name={img} alt={name} sizes="(max-width: 760px) 100vw, 33vw" />
+                  <span className="stay-check" aria-hidden="true">
+                    <Check size={16} strokeWidth={3} />
                   </span>
+                  <div>
+                    <h3>{name}</h3>
+                    <p>{text}</p>
+                  </div>
                 </button>
               ))}
             </div>
+            <div className="stay-bar">
+              <div>
+                <small>Your selection</small>
+                <strong>{stayType}</strong>
+              </div>
+              <ArrowBtn onClick={() => openBooking(stayType === "Tent Stay" ? "Camping" : stayType === "Dormitory" ? "Group stay" : "Stay")}>
+                Ask about {stayType}
+              </ArrowBtn>
+            </div>
           </div>
         </section>
 
-        {/* =====================================================
-            VIDEO
-            ===================================================== */}
-
-        <section className="cinematic-section">
-          <video
-            ref={videoRef}
-            className="cinematic-video"
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="metadata"
-            poster={`${A}RamaKalMedu_Nature_view_WM1.jpg`}
-          >
-            <source src={`${A}RamaKalMedu.mp4`} type="video/mp4" />
-          </video>
-
-          <div className="cinematic-overlay" />
-          <div className="cinematic-grain" />
-
-          <div className="container cinematic-content">
-            <div className="cinematic-copy">
-              <span className="section-kicker">A MOMENT FROM RAMAKALMEDU</span>
-
+        {/* ============ FILM ============ */}
+        <section className="film">
+          <div className="film-frame">
+            <video
+              ref={videoRef}
+              muted
+              loop
+              playsInline
+              preload="none"
+              poster="/img/ramakalmedu-film-poster.webp"
+              aria-label="Short film of the Ramakalmedu landscape"
+            />
+            <div className="film-shade" />
+            <div className="film-content">
+              <Tag light>Live the landscape</Tag>
               <h2>
-                Let the hills
+                Let the hills speak
                 <br />
-                <em>speak for themselves.</em>
+                for themselves.
               </h2>
-
-              <p>
-                Take a breath. Watch the landscape move. This is the Ramakalmedu
-                experience — wide skies, mountain air and the Western Ghats
-                unfolding around you.
-              </p>
-
-              <button
-                className="light-btn transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl"
-                type="button"
-                onClick={openBooking}
-              >
-                Plan Your Visit ↗
-              </button>
+              <p>Wide skies, mountain air and the Western Ghats unfolding around you.</p>
+              <ArrowBtn variant="light" onClick={() => openBooking()}>
+                Plan Your Visit
+              </ArrowBtn>
             </div>
-
-            <div className="cinematic-badge">
-              <span>RKM</span>
-
-              <small>TRAVEL HUB</small>
-
-              <i>✦</i>
-
-              <small>RAMAKALMEDU · IDUKKI</small>
-            </div>
-          </div>
-
-          <div className="cinematic-bottom">
-            <span>LIVE THE LANDSCAPE</span>
-
-            <span>●</span>
-
-            <span>WESTERN GHATS</span>
           </div>
         </section>
 
-        {/* =====================================================
-            PANORAMA
-            ===================================================== */}
-
-        <section className="panorama-section">
-          <img
-            src={`${A}ramakalmedu_tamilnadu_longview.jpg`}
-            alt="Wide view from Ramakalmedu"
-          />
-
-          <div className="panorama-overlay" />
-
-          <div className="container panorama-copy">
-            <span className="section-kicker">DISCOVER IDUKKI</span>
-
-            <h2>
-              Look further.
-              <br />
-              <em>Feel more.</em>
-            </h2>
-
-            <p>
-              From dramatic rock formations to endless valley views, Ramakalmedu
-              makes the journey part of the destination.
-            </p>
-
-            <button
-              className="light-btn transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl"
-              type="button"
-              onClick={openBooking}
-            >
-              Plan an Adventure ↗
-            </button>
-          </div>
-        </section>
-
-        {/* =====================================================
-            FACILITIES
-            ===================================================== */}
-
-        <section id="facilities" className="section light-section">
+        {/* ============ FACILITIES ============ */}
+        <section className="section facilities" id="facilities">
           <div className="container">
-            <div className="section-heading centered">
-              <span className="section-kicker">AT THE HUB</span>
-
-              <h2>
-                Everything you need,
-                <br />
-                <em>right here.</em>
-              </h2>
-
-              <p>
-                Facilities and services for a smoother stop, stay and adventure.
-              </p>
-            </div>
-
-            <div className="facility-grid">
-              {facilities.map(([icon, title, text]) => (
-                <article className="facility-card" key={title}>
-                  <div className="facility-icon">{icon}</div>
-
+            <SectionHead
+              tag="Facilities"
+              title="Everything you need, right here"
+              text="Facilities and services for a smoother stop, stay and adventure."
+            />
+            <div className="fac-grid">
+              {facilities.map(([Icon, title, text]) => (
+                <article key={title} className="fac-card">
+                  <span className="fac-icon">
+                    <Icon size={22} strokeWidth={1.8} />
+                  </span>
                   <h3>{title}</h3>
-
                   <p>{text}</p>
                 </article>
               ))}
@@ -849,1035 +819,367 @@ function App() {
           </div>
         </section>
 
-        {/* =====================================================
-            NEARBY
-            ===================================================== */}
-
-        <section className="explore-places-section section">
-          <div className="container">
-            <div className="section-heading centered">
-              <span className="section-kicker">EXPLORE AROUND THE HUB</span>
-
-              <h2>
-                Make Ramakalmedu your <em>base.</em>
-              </h2>
-
-              <p>
-                Build a day around viewpoints, rocks, windmills, off-road routes
-                and nearby attractions.
-              </p>
+        {/* ============ PLAN YOUR DAY ============ */}
+        <section className="section plan">
+          <div className="container plan-grid">
+            <div className="plan-media">
+              <Photo name="ramakalmedu_windmills_elevated_view" alt="Windmills at sunset" sizes="(max-width: 760px) 100vw, 45vw" />
             </div>
-
-            <div className="nearby-grid">
-              {nearbyPlaces.map(([title, image, text]) => (
-                <article className="nearby-card" key={title}>
-                  <img src={`${A}${image}`} alt={title} />
-
-                  <div>
-                    <span>DISCOVER</span>
-
-                    <h3>{title}</h3>
-
-                    <p>{text}</p>
-                  </div>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* =====================================================
-            EXPERIENCE PICKER
-            ===================================================== */}
-
-        <section className="experience-picker section" id="experience-picker">
-          <div className="container">
-            <div className="section-heading centered">
-              <span className="section-kicker">CHOOSE YOUR EXPERIENCE</span>
-
-              <h2>
-                Come for what <em>moves you.</em>
-              </h2>
-
-              <p>Pick a mood and discover how a Ramakalmedu day can unfold.</p>
-            </div>
-
-            <div className="experience-tabs">
-              {[
-                "Nature Escape",
-                "Campfire Night",
-                "Adventure",
-                "Family Trip",
-                "Group Tour",
-                "Relax & Stay",
-              ].map((x) => (
-                <button
-                  key={x}
-                  type="button"
-                  className={activeExperience === x ? "active" : ""}
-                  onClick={() => setActiveExperience(x)}
-                >
-                  {x}
-                </button>
-              ))}
-            </div>
-
-            <div className="experience-feature">
-              <img
-                src={`${A}${
-                  activeExperience === "Adventure"
-                    ? "ramakalmedu_offroad_view.jpg"
-                    : activeExperience === "Campfire Night"
-                      ? "20260927_065616.jpg"
-                      : activeExperience === "Family Trip"
-                        ? "RamaKalMedu_view.jpg"
-                        : activeExperience === "Group Tour"
-                          ? "ramakalmedu_tamilnadu_longview.jpg"
-                          : activeExperience === "Relax & Stay"
-                            ? "RamaKalMedu_RKM_Travel_Hub.jpeg"
-                            : "RamaKalMedu_Nature_view.jpg"
-                }`}
-                alt={activeExperience}
-              />
-
-              <div className="experience-feature-copy">
-                <span>RKM EXPERIENCE</span>
-
-                <h3>{activeExperience}</h3>
-
-                <p>
-                  {activeExperience === "Adventure"
-                    ? "Take the scenic route with off-road trails, viewpoints and jeep safari possibilities."
-                    : activeExperience === "Campfire Night"
-                      ? "End the day slowly with warm food, stories, mountain air and a campfire."
-                      : activeExperience === "Family Trip"
-                        ? "A relaxed base for families who want views, comfort and easy local exploring."
-                        : activeExperience === "Group Tour"
-                          ? "Plan school, college, corporate and friends trips with practical support at the hub."
-                          : activeExperience === "Relax & Stay"
-                            ? "Freshen up, rest, eat well and enjoy the hills without rushing."
-                            : "Wide views, quiet moments and the feeling of being above the valleys."}
-                </p>
-
-                <button
-                  className="primary-btn"
-                  type="button"
-                  onClick={openBooking}
-                >
-                  Plan this experience ↗
-                </button>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* =====================================================
-            PLAN DAY
-            ===================================================== */}
-
-        <section className="plan-day-section section" id="plan-day">
-          <div className="container">
-            <div className="section-heading centered">
-              <span className="section-kicker">PLAN YOUR DAY</span>
-
-              <h2>
-                From sunrise to <em>campfire.</em>
-              </h2>
-
-              <p>
-                Use this as inspiration and adjust the pace to suit your group.
-              </p>
-            </div>
-
-            <div className="day-tabs">
-              {["Half Day", "Full Day"].map((x) => (
-                <button
-                  key={x}
-                  type="button"
-                  className={dayType === x ? "active" : ""}
-                  onClick={() => setDayType(x)}
-                >
-                  {x}
-                </button>
-              ))}
-            </div>
-
-            <div className="timeline">
-              {(dayType === "Half Day"
-                ? [
-                    [
-                      "08:00",
-                      "FreshUp & breakfast",
-                      "Start slowly at RKM Travel Hub.",
-                    ],
-                    [
-                      "09:00",
-                      "Windmill country",
-                      "Take in the highland views.",
-                    ],
-                    [
-                      "11:00",
-                      "Ramakkal Rock",
-                      "Enjoy the signature viewpoint.",
-                    ],
-                    [
-                      "12:30",
-                      "Lunch & refresh",
-                      "Return for food and a comfortable pause.",
-                    ],
-                  ]
-                : [
-                    [
-                      "06:00",
-                      "Sunrise",
-                      "Start with the cool mountain morning.",
-                    ],
-                    ["08:00", "Breakfast & FreshUp", "Recharge at the hub."],
-                    [
-                      "10:00",
-                      "Windmills & viewpoints",
-                      "Explore the highlands.",
-                    ],
-                    ["13:00", "Lunch", "Pause and refuel."],
-                    [
-                      "15:00",
-                      "Jeep / local adventure",
-                      "Choose an off-road experience.",
-                    ],
-                    [
-                      "17:30",
-                      "Tortoise Rock / sunset",
-                      "Finish with a scenic view.",
-                    ],
-                    ["19:00", "Campfire", "Slow down under the evening sky."],
-                  ]
-              ).map(([time, title, text]) => (
-                <article key={time} className="timeline-item">
-                  <time>{time}</time>
-
-                  <div>
-                    <h3>{title}</h3>
-
-                    <p>{text}</p>
-                  </div>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* =====================================================
-            STAY SELECTOR
-            ===================================================== */}
-
-        <section className="stay-selector section" id="stay-selector">
-          <div className="container">
-            <div className="section-heading centered">
-              <span className="section-kicker">FIND YOUR STAY</span>
-
-              <h2>
-                Choose the way you want to <em>stay.</em>
-              </h2>
-            </div>
-
-            <div className="stay-selector-grid">
-              {[
-                [
-                  "Dormitory",
-                  "Group-friendly practical accommodation",
-                  "RamaKalMedu_RKM_Travel_Hub.jpeg",
-                ],
-                [
-                  "Tent Stay",
-                  "A closer-to-nature outdoor option",
-                  "ramakalmedu_offroad_view.jpg",
-                ],
-                [
-                  "Homestay",
-                  "A relaxed local-style experience",
-                  "RamaKalMedu_view.jpg",
-                ],
-              ].map(([name, text, img]) => (
-                <button
-                  key={name}
-                  type="button"
-                  className={`stay-choice ${stayType === name ? "active" : ""}`}
-                  onClick={() => setStayType(name)}
-                >
-                  <img src={`${A}${img}`} alt={name} />
-
-                  <div>
-                    <span>{name}</span>
-
-                    <h3>{name}</h3>
-
-                    <p>{text}</p>
-                  </div>
-                </button>
-              ))}
-            </div>
-
-            <div className="stay-detail">
-              <div>
-                <span>YOUR SELECTION</span>
-
-                <h3>{stayType}</h3>
-
-                <p>
-                  Tell RKM your date, group size and requirements. The team can
-                  confirm the suitable option on WhatsApp.
-                </p>
-              </div>
-
-              <button
-                className="primary-btn"
-                type="button"
-                onClick={openBooking}
-              >
-                Ask about {stayType} ↗
-              </button>
-            </div>
-          </div>
-        </section>
-
-        {/* =====================================================
-            MAP
-            ===================================================== */}
-
-        <section className="map-section section" id="explore">
-          <div className="container">
-            <div className="section-heading centered">
-              <span className="section-kicker">EXPLORE AROUND RKM</span>
-
-              <h2>
-                Your base for the <em>Western Ghats.</em>
-              </h2>
-
-              <p>
-                A simple visual guide to places you can consider around your
-                Ramakalmedu visit.
-              </p>
-            </div>
-
-            <div className="illustrated-map">
-              <div className="map-road road-a" />
-              <div className="map-road road-b" />
-
-              <button
-                className="map-pin hub"
-                type="button"
-                onClick={openBooking}
-              >
-                <b>RKM</b>
-
-                <span>Travel Hub</span>
-              </button>
-
-              <button
-                className="map-pin rock"
-                type="button"
-                onClick={openBooking}
-              >
-                🪨
-                <span>Ramakkal Rock</span>
-              </button>
-
-              <button
-                className="map-pin tortoise"
-                type="button"
-                onClick={openBooking}
-              >
-                🐢
-                <span>Tortoise Rock</span>
-              </button>
-
-              <button
-                className="map-pin wind"
-                type="button"
-                onClick={openBooking}
-              >
-                🌬️
-                <span>Windmills</span>
-              </button>
-
-              <button
-                className="map-pin vineyard"
-                type="button"
-                onClick={openBooking}
-              >
-                🍇
-                <span>Vineyards</span>
-              </button>
-
-              <div className="map-label">
-                RAMAKALMEDU
-                <br />
-                <small>IDUKKI · KERALA</small>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* =====================================================
-            FOOD
-            ===================================================== */}
-
-        <section className="food-section section">
-          <div className="container split-grid food-grid">
-            <div className="food-photo">
-              <img
-                src={`${A}RamaKalMedu_RKM_Travel_Hub.jpeg`}
-                alt="RKM Travel Hub"
-              />
-            </div>
-
             <div>
-              <span className="section-kicker">TASTE IDUKKI</span>
-
-              <h2>
-                Eat. Sip. <em>Slow down.</em>
-              </h2>
-
-              <p className="large-copy">
-                Make the hub part of your journey — with food, refreshments and
-                a chance to discover the character of Kerala through local
-                flavours and spices.
-              </p>
-
-              <div className="food-tags">
-                <span>☕ Local Tea</span>
-
-                <span>🌶 Kerala Spices</span>
-
-                <span>🍛 Local Food</span>
-
-                <span>🔥 Campfire Dining</span>
+              <Tag>Plan Your Day</Tag>
+              <h2 className="display-sm">From sunrise to campfire</h2>
+              <p className="muted">Use this as inspiration and adjust the pace to suit your group.</p>
+              <div className="seg" role="tablist">
+                {Object.keys(dayPlans).map((d) => (
+                  <button
+                    key={d}
+                    type="button"
+                    role="tab"
+                    aria-selected={dayType === d}
+                    className={dayType === d ? "active" : ""}
+                    onClick={() => setDayType(d)}
+                  >
+                    {d}
+                  </button>
+                ))}
               </div>
-
-              <button
-                className="primary-btn"
-                type="button"
-                onClick={openBooking}
-              >
-                Ask about food ↗
-              </button>
+              <ol className="day-list">
+                {dayPlans[dayType].map(([time, title, text]) => (
+                  <li key={time + title}>
+                    <time>{time}</time>
+                    <div>
+                      <strong>{title}</strong>
+                      <span>{text}</span>
+                    </div>
+                  </li>
+                ))}
+              </ol>
             </div>
           </div>
         </section>
 
-        {/* =====================================================
-            MOMENTS
-            ===================================================== */}
-
-        <section className="moments-section section" id="moments">
+        {/* ============ GALLERY ============ */}
+        <section className="section gallery" id="gallery">
           <div className="container">
-            <div className="section-heading centered">
-              <span className="section-kicker">MOMENTS AT RKM</span>
-
-              <h2>
-                Take a little of the <em>hills home.</em>
-              </h2>
-            </div>
-
-            <div className="moments-grid">
-              {gallery.slice(0, 6).map(([src, title]) => (
-                <button
-                  key={src}
-                  type="button"
-                  onClick={() =>
-                    setActiveImage({
-                      src,
-                      title,
-                      tag: "RKM Travel Hub",
-                    })
-                  }
-                >
-                  <img src={`${A}${src}`} alt={title} />
-
+            <SectionHead
+              tag="Gallery"
+              title="The place is the experience"
+              text="Viewpoints, rocks, windmills, valleys, trails and local landmarks — straight from Ramakalmedu."
+            />
+            <div className="masonry">
+              {gallery.map(([img, title], i) => (
+                <button key={img} type="button" className="masonry-item" onClick={() => setLightbox(i)} aria-label={`Open ${title}`}>
+                  <Photo name={img} alt={title} sizes="(max-width: 760px) 50vw, 33vw" />
                   <span>{title}</span>
                 </button>
               ))}
             </div>
-
-            <div className="social-note">
+            <p className="follow">
               Follow the journey · <strong>@ramakalmedu</strong>
-            </div>
+            </p>
           </div>
         </section>
 
-        {/* =====================================================
-            BEFORE YOU COME
-            ===================================================== */}
-
-        <section className="visit-section section">
-          <div className="container visit-grid">
-            <div>
-              <span className="section-kicker">BEFORE YOU COME</span>
-
-              <h2>
-                Pack light. <em>Explore well.</em>
-              </h2>
-
-              <p>Small things make a hill trip more comfortable.</p>
-            </div>
-
-            <div className="packing-list">
-              {[
-                "Comfortable shoes",
-                "Light jacket",
-                "Sunscreen",
-                "Water bottle",
-                "Camera",
-                "Power bank",
-                "Rain protection",
-                "A little extra time",
-              ].map((x) => (
-                <div key={x}>
-                  <span>✓</span>
-
-                  {x}
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* =====================================================
-            TRAVEL INFO
-            ===================================================== */}
-
-        <section className="travel-info section">
+        {/* ============ TEAM ============ */}
+        <section className="section team" id="team">
           <div className="container">
-            <div className="section-heading centered">
-              <span className="section-kicker">GETTING HERE</span>
-
-              <h2>
-                Make the journey part of the <em>story.</em>
-              </h2>
-            </div>
-
-            <div className="distance-grid">
-              {[
-                ["Kochi", "~150 km"],
-                ["Munnar", "~100 km"],
-                ["Thekkady", "~75 km"],
-                ["Kottayam", "~130 km"],
-              ].map(([a, b]) => (
-                <div key={a}>
-                  <span>{a}</span>
-
-                  <strong>{b}</strong>
-                </div>
+            <SectionHead
+              tag="Our Team"
+              title="Meet the people behind RKM"
+              text="Call or WhatsApp the right person directly — for stays, jeep safaris, spices and shopping at Ramakalmedu."
+            />
+            <div className="team-grid">
+              {team.map((m) => (
+                <article className="team-card" key={m.id}>
+                  <div className="team-photo">
+                    {m.photo ? (
+                      <img src={`/img/team/${m.id}.webp`} alt={m.name} loading="lazy" decoding="async" />
+                    ) : (
+                      <div className="team-placeholder" aria-label={`Photo of ${m.name} coming soon`}>
+                        <span>{initials(m.name)}</span>
+                      </div>
+                    )}
+                    <LogoMark size={34} className="team-badge" />
+                  </div>
+                  <div className="team-body">
+                    <small>{m.role}</small>
+                    <h3>{m.name}</h3>
+                    <div className="team-phones">
+                      {m.phones.map((p) => (
+                        <a key={p} href={`tel:+${digits(p)}`}>
+                          <Phone size={15} /> {p}
+                        </a>
+                      ))}
+                    </div>
+                    <button
+                      type="button"
+                      className="mini-btn wa"
+                      onClick={() =>
+                        window.open(
+                          `https://wa.me/${digits(m.phones[0])}?text=${encodeURIComponent(`Hi ${m.name.split(" ")[0]}, I found you on ramakalmedu.com and would like to enquire about ${m.role.split(" · ")[0]}.`)}`,
+                          "_blank",
+                          "noopener,noreferrer",
+                        )
+                      }
+                    >
+                      <MessageCircle size={15} /> WhatsApp
+                    </button>
+                  </div>
+                </article>
               ))}
             </div>
-
-            <div className="travel-actions">
-              <button
-                className="primary-btn"
-                type="button"
-                onClick={() =>
-                  window.open(
-                    "https://www.google.com/maps/search/?api=1&query=Ramakalmedu%2C%20Idukki%2C%20Kerala",
-                    "_blank",
-                    "noopener,noreferrer",
-                  )
-                }
-              >
-                Get Directions ↗
-              </button>
-
-              <button
-                className="outline-btn"
-                type="button"
-                onClick={openBooking}
-              >
-                Ask about transport
-              </button>
+            <div className="team-office">
+              <LogoMark size={46} />
+              <div>
+                <small>RKM Office · Call / WhatsApp</small>
+                <a href={`tel:+${CONTACT}`}>{PHONE_DISPLAY}</a>
+              </div>
+              <ArrowBtn onClick={() => openWhatsApp()}>Message the Office</ArrowBtn>
             </div>
           </div>
         </section>
 
-        {/* =====================================================
-            GROUPS
-            ===================================================== */}
-
-        <section className="groups-section">
-          <div className="container split-grid">
+        {/* ============ FAQ ============ */}
+        <section className="section faq">
+          <div className="container faq-grid">
             <div>
-              <span className="section-kicker">MADE FOR GROUPS</span>
-
-              <h2>
-                Travel together.
-                <br />
-                <em>Remember more.</em>
-              </h2>
-
-              <p className="large-copy">
-                Whether you are bringing a school group, family, friends or an
-                adventure team, RKM Travel Hub is designed around the realities
-                of group travel.
+              <Tag>FAQ</Tag>
+              <h2 className="display-sm">Everything you need to know before you go</h2>
+              <p className="muted">
+                Planning a trip to Ramakalmedu? Here are quick answers to the questions we hear most.
               </p>
-
-              <div className="highlight-list">
-                {highlights.map((item) => (
-                  <div key={item}>
-                    <span>✓</span>
-
-                    {item}
+              <div className="distance-list">
+                {[
+                  ["Thekkady", "~75 km"],
+                  ["Munnar", "~100 km"],
+                  ["Kottayam", "~130 km"],
+                  ["Kochi", "~150 km"],
+                ].map(([a, b]) => (
+                  <div key={a}>
+                    <span>{a}</span>
+                    <strong>{b}</strong>
                   </div>
                 ))}
               </div>
-
-              <button
-                className="primary-btn dark-btn"
-                type="button"
-                onClick={openBooking}
-              >
-                Send a Group Enquiry ↗
-              </button>
+              <ArrowBtn href={MAPS_URL}>Get Directions</ArrowBtn>
             </div>
-
-            <div className="groups-photo">
-              <img
-                src={`${A}RamaKalMedu_view.jpg`}
-                alt="Panoramic view from Ramakalmedu"
-              />
-
-              <div>
-                <strong>RKM</strong>
-
-                <span>YOUR BASE FOR THE WESTERN GHATS</span>
-              </div>
+            <div className="accordion">
+              {faqs.map(([q, a], i) => {
+                const open = openFaq === i;
+                return (
+                  <div className={`acc-item ${open ? "open" : ""}`} key={q}>
+                    <button type="button" onClick={() => setOpenFaq(open ? -1 : i)} aria-expanded={open}>
+                      <span>{q}</span>
+                      {open ? <Minus size={18} /> : <Plus size={18} />}
+                    </button>
+                    <div className="acc-panel">
+                      <p>{a}</p>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </section>
 
-        {/* =====================================================
-            CONTACT
-            ===================================================== */}
-
-        <section id="contact" className="contact-section">
-          <div className="container contact-inner">
-            <div>
-              <span className="section-kicker">PLAN YOUR VISIT</span>
-
-              <h2>
-                Relax. Refresh.
-                <br />
-                <em>Reconnect.</em>
-              </h2>
-
-              <p>
-                Ready to make your Ramakalmedu stop memorable? Contact RKM
-                Travel Hub for stay, group, food and local experience enquiries.
-              </p>
-
-              <div className="contact-actions">
-                <button
-                  className="primary-btn transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl"
-                  type="button"
-                  onClick={openWhatsApp}
-                >
-                  WhatsApp Us ↗
-                </button>
-
-                <button
-                  className="outline-btn"
-                  type="button"
-                  onClick={openBooking}
-                >
-                  Enquire Online
-                </button>
-              </div>
-            </div>
-
+        {/* ============ GROUPS / CONTACT ============ */}
+        <section className="section contact" id="contact">
+          <div className="container">
             <div className="contact-card">
-              <div className="contact-row">
-                <span>⌖</span>
-
+              <Photo name="RamaKalMedu_view" alt="View from Ramakalmedu" sizes="100vw" className="contact-bg" />
+              <div className="contact-shade" />
+              <div className="contact-inner">
                 <div>
-                  <small>LOCATION</small>
-
-                  <strong>Ramakalmedu, Idukki, Kerala</strong>
+                  <Tag light>
+                    <Users size={14} /> Travel together
+                  </Tag>
+                  <h2>
+                    Relax. Refresh.
+                    <br />
+                    Reconnect.
+                  </h2>
+                  <p>
+                    Ready to make your Ramakalmedu stop memorable? Contact RKM Travel Hub for stay, group, food and
+                    local experience enquiries.
+                  </p>
+                  <div className="hero-actions">
+                    <ArrowBtn variant="light" onClick={() => openWhatsApp()}>
+                      WhatsApp Us
+                    </ArrowBtn>
+                    <button className="ghost-btn" type="button" onClick={() => openBooking()}>
+                      Enquire Online
+                    </button>
+                  </div>
                 </div>
+                <ul className="contact-list">
+                  <li>
+                    <MapPin size={20} />
+                    <div>
+                      <small>Location</small>
+                      <strong>Ramakalmedu, Idukki, Kerala</strong>
+                    </div>
+                  </li>
+                  <li>
+                    <Phone size={20} />
+                    <div>
+                      <small>Phone / WhatsApp</small>
+                      <a href={`tel:+${CONTACT}`}>{PHONE_DISPLAY}</a>
+                    </div>
+                  </li>
+                  <li>
+                    <Compass size={20} />
+                    <div>
+                      <small>Travel hub</small>
+                      <strong>Refresh · Stay · Explore · Experience</strong>
+                    </div>
+                  </li>
+                  <li>
+                    <Mail size={20} />
+                    <div>
+                      <small>Email</small>
+                      <a href="mailto:rkmtravelhub@gmail.com">rkmtravelhub@gmail.com</a>
+                    </div>
+                  </li>
+                  <li>
+                    <ShieldCheck size={20} />
+                    <div>
+                      <small>Website</small>
+                      <strong>www.ramakalmedu.com</strong>
+                    </div>
+                  </li>
+                </ul>
               </div>
-
-              <div className="contact-row">
-                <span>☎</span>
-
-                <div>
-                  <small>PHONE / WHATSAPP</small>
-
-                  <strong>{PHONE_DISPLAY}</strong>
-                </div>
-              </div>
-
-              <div className="contact-row">
-                <span>✦</span>
-
-                <div>
-                  <small>TRAVEL HUB</small>
-
-                  <strong>Refresh · Stay · Explore · Experience</strong>
-                </div>
-              </div>
-
-              <div className="contact-row">
-                <span>◉</span>
-
-                <div>
-                  <small>WEBSITE</small>
-
-                  <strong>www.ramakalmedu.com</strong>
-                </div>
-              </div>
-
-              <button
-                className="full primary-btn"
-                type="button"
-                onClick={openBooking}
-              >
-                Start Your Enquiry ↗
-              </button>
             </div>
           </div>
         </section>
       </main>
 
-      {/* =====================================================
-          MOBILE WHATSAPP
-          ===================================================== */}
-
-      <button
-        className="mobile-whatsapp"
-        type="button"
-        onClick={openWhatsApp}
-        aria-label="Contact RKM Travel Hub on WhatsApp"
-      >
-        <span>◉</span>
-        WhatsApp Us
-      </button>
-
-      {/* =====================================================
-          MOBILE BOTTOM NAV
-          ===================================================== */}
-
-      <nav className="mobile-bottom-nav">
-        {[
-          ["⌂", "Home", "home"],
-          ["🏔", "Explore", "explore"],
-          ["🛏", "Stay", "stay"],
-          ["▦", "Gallery", "gallery"],
-          ["◉", "WhatsApp", null],
-        ].map(([icon, label, id]) => (
-          <button
-            key={label}
-            type="button"
-            onClick={() => (id ? scrollTo(id) : openWhatsApp())}
-          >
-            <span>{icon}</span>
-
-            <small>{label}</small>
-          </button>
-        ))}
-      </nav>
-
-      {/* =====================================================
-          FOOTER
-          ===================================================== */}
-
+      {/* ============ FOOTER ============ */}
       <footer className="footer">
-        <div className="container footer-grid">
+        <div className="container footer-inner">
           <div>
-            <strong>RamaKalMedu.com</strong>
-
-            <p>RKM Travel Hub · Ramakalmedu, Idukki, Kerala</p>
+            <div className="brand footer-brand">
+              <LogoMark size={44} className="brand-logo" />
+              <span className="brand-text">
+                <strong>RamaKalMedu.com</strong>
+                <small>RKM Travel Hub · Ramakalmedu, Idukki, Kerala</small>
+              </span>
+            </div>
           </div>
-
-          <div className="footer-links">
-            {nav.slice(0, 5).map(([label, id]) => (
+          <nav aria-label="Footer">
+            {nav.slice(1).map(([label, id]) => (
               <button key={id} type="button" onClick={() => scrollTo(id)}>
                 {label}
               </button>
             ))}
-          </div>
-
-          <div className="footer-tag">
-            RAMA IN SPIRIT · KAL IN STRENGTH · MEDU IN BEAUTY
-          </div>
+          </nav>
+        </div>
+        <div className="container footer-bottom">
+          <span>Rama in spirit · Kal in strength · Medu in beauty</span>
+          <span>© {new Date().getFullYear()} RKM Travel Hub</span>
         </div>
       </footer>
 
-      {/* =====================================================
-          BOOKING MODAL
-          ===================================================== */}
+      {/* Floating WhatsApp */}
+      <button className="wa-float" type="button" onClick={() => openWhatsApp()} aria-label="Chat with RKM Travel Hub on WhatsApp">
+        <MessageCircle size={24} />
+      </button>
 
-      {bookingOpen && (
-        <div
-          className="fixed inset-0 z-[200] flex items-center justify-center overflow-y-auto bg-black/60 p-4 backdrop-blur-sm sm:p-6"
-          onMouseDown={(e) => {
-            if (e.target === e.currentTarget) {
-              setBookingOpen(false);
-              setEnquiryOpen(false);
-            }
-          }}
-        >
-          <div
-            className="relative my-auto w-full max-w-xl overflow-visible rounded-3xl bg-white p-5 text-rkm-ink shadow-2xl sm:p-7 md:p-8"
-            onMouseDown={(e) => e.stopPropagation()}
+      {/* ============ LIGHTBOX ============ */}
+      {lightbox !== null && (
+        <div className="lightbox" role="dialog" aria-modal="true" aria-label={gallery[lightbox][1]} onClick={() => setLightbox(null)}>
+          <button className="lb-close" type="button" aria-label="Close" onClick={() => setLightbox(null)}>
+            <X size={24} />
+          </button>
+          <button
+            className="lb-nav prev"
+            type="button"
+            aria-label="Previous photo"
+            onClick={(e) => {
+              e.stopPropagation();
+              setLightbox((i) => (i - 1 + gallery.length) % gallery.length);
+            }}
           >
-            {/* CLOSE */}
-
-            <button
-              className="absolute right-4 top-4 z-20 flex h-9 w-9 items-center justify-center rounded-full bg-black/5 text-2xl leading-none transition hover:bg-black/10"
-              type="button"
-              onClick={() => {
-                setBookingOpen(false);
-                setEnquiryOpen(false);
-              }}
-              aria-label="Close enquiry form"
-            >
-              ×
-            </button>
-
-            {/* HEADER */}
-
-            <span className="section-kicker">RKM TRAVEL HUB</span>
-
-            <h2 className="mt-2 pr-10 text-3xl font-semibold tracking-tight sm:text-4xl">
-              Plan your visit.
-            </h2>
-
-            <p className="mt-2 max-w-lg text-sm leading-6 opacity-65 sm:text-base">
-              Tell us what you need and the team can get back to you.
-            </p>
-
-            <form onSubmit={handleBookingSubmit} className="mt-6">
-              {/* NAME + PHONE */}
-
-              <div className="grid gap-3 sm:grid-cols-2">
-                <input
-                  name="name"
-                  required
-                  placeholder="Your name"
-                  autoComplete="name"
-                  className="min-h-12 w-full rounded-xl border border-black/10 bg-black/[0.02] px-4 text-sm outline-none transition placeholder:text-black/40 focus:border-black/25 focus:bg-white focus:ring-4 focus:ring-black/5"
-                />
-
-                <input
-                  name="phone"
-                  required
-                  type="tel"
-                  placeholder="Phone / WhatsApp"
-                  autoComplete="tel"
-                  className="min-h-12 w-full rounded-xl border border-black/10 bg-black/[0.02] px-4 text-sm outline-none transition placeholder:text-black/40 focus:border-black/25 focus:bg-white focus:ring-4 focus:ring-black/5"
-                />
-              </div>
-
-              {/* =================================================
-                  CUSTOM MULTI SELECT
-                  ================================================= */}
-
-              <div ref={enquiryRef} className="relative mt-5">
-                <label className="block text-sm font-bold">
-                  What are you looking for?
-                </label>
-
-                <p className="mt-1 text-xs opacity-55">
-                  Select one or more options
-                </p>
-
-                {/* SELECTED CHIPS */}
-
-                {selectedEnquiries.length > 0 && (
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {selectedEnquiries.map((option) => (
-                      <span
-                        key={option}
-                        className="inline-flex max-w-full items-center gap-1.5 rounded-full bg-rkm-cream px-3 py-1.5 text-xs font-medium text-rkm-ink"
-                      >
-                        <span className="min-w-0 truncate">{option}</span>
-
-                        <button
-                          type="button"
-                          className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-black/[0.08] text-sm leading-none transition hover:bg-black/[0.16]"
-                          onClick={() => removeEnquiry(option)}
-                          aria-label={`Remove ${option}`}
-                        >
-                          ×
-                        </button>
-                      </span>
-                    ))}
-                  </div>
-                )}
-
-                {/* DROPDOWN TRIGGER */}
-
-                <button
-                  type="button"
-                  className={`mt-3 flex min-h-12 w-full items-center justify-between rounded-xl border bg-white px-4 text-left text-sm shadow-sm outline-none transition ${
-                    enquiryOpen
-                      ? "rounded-b-none border-black/30 ring-4 ring-black/5"
-                      : "border-black/10 hover:border-black/25"
-                  }`}
-                  onClick={() => setEnquiryOpen((open) => !open)}
-                  aria-expanded={enquiryOpen}
-                  aria-haspopup="listbox"
-                >
-                  <span
-                    className={
-                      selectedEnquiries.length === 0
-                        ? "text-black/45"
-                        : "font-medium"
-                    }
-                  >
-                    {selectedEnquiries.length === 0
-                      ? "Select enquiry options"
-                      : `${selectedEnquiries.length} option${
-                          selectedEnquiries.length > 1 ? "s" : ""
-                        } selected`}
-                  </span>
-
-                  <span
-                    className={`ml-3 shrink-0 text-lg leading-none transition-transform ${
-                      enquiryOpen ? "rotate-180" : ""
-                    }`}
-                  >
-                    ⌄
-                  </span>
-                </button>
-
-                {/* DROPDOWN */}
-
-                {enquiryOpen && (
-                  <div
-                    className="absolute left-0 right-0 top-full z-[300] overflow-hidden rounded-b-xl border border-t-0 border-black/10 bg-white shadow-2xl"
-                    role="listbox"
-                    aria-multiselectable="true"
-                  >
-                    <div className="max-h-64 overflow-y-auto py-1">
-                      {enquiryOptions.map((option) => {
-                        const selected = selectedEnquiries.includes(option);
-
-                        return (
-                          <button
-                            key={option}
-                            type="button"
-                            role="option"
-                            aria-selected={selected}
-                            className={`flex min-h-11 w-full items-center justify-between border-b border-black/[0.045] px-4 py-2.5 text-left text-sm transition last:border-b-0 ${
-                              selected
-                                ? "bg-black/[0.045] font-semibold"
-                                : "hover:bg-black/[0.025]"
-                            }`}
-                            onClick={() => toggleEnquiry(option)}
-                          >
-                            <span>{option}</span>
-
-                            {selected && (
-                              <span className="ml-3 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-rkm-ink text-xs text-white">
-                                ✓
-                              </span>
-                            )}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
-
-                <p className="mt-2 text-[11px] leading-4 text-black/45">
-                  Select all the services you need.
-                </p>
-              </div>
-
-              {/* =================================================
-                  HIDDEN ENQUIRY VALUES
-                  ================================================= */}
-
-              {selectedEnquiries.map((option) => (
-                <input
-                  key={option}
-                  type="hidden"
-                  name="enquiry"
-                  value={option}
-                />
-              ))}
-
-              {/* DATE + GUESTS */}
-
-              <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                <input
-                  name="date"
-                  type="date"
-                  className="min-h-12 w-full rounded-xl border border-black/10 bg-black/[0.02] px-4 text-sm outline-none transition focus:border-black/25 focus:bg-white focus:ring-4 focus:ring-black/5"
-                />
-
-                <input
-                  name="guests"
-                  type="number"
-                  min="1"
-                  placeholder="No. of guests"
-                  className="min-h-12 w-full rounded-xl border border-black/10 bg-black/[0.02] px-4 text-sm outline-none transition placeholder:text-black/40 focus:border-black/25 focus:bg-white focus:ring-4 focus:ring-black/5"
-                />
-              </div>
-
-              {/* MESSAGE */}
-
-              <textarea
-                name="message"
-                rows="4"
-                placeholder="Tell us about your trip..."
-                className="mt-3 block w-full resize-y rounded-xl border border-black/10 bg-black/[0.02] px-4 py-3 text-sm leading-6 outline-none transition placeholder:text-black/40 focus:border-black/25 focus:bg-white focus:ring-4 focus:ring-black/5"
-              />
-
-              {/* SEND */}
-
-              <button
-                className="mt-4 flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-rkm-ink px-5 py-3 text-sm font-semibold text-white shadow-lg transition hover:-translate-y-0.5 hover:shadow-xl active:translate-y-0"
-                type="submit"
-              >
-                <span>◉</span>
-                Send Enquiry on WhatsApp ↗
-              </button>
-
-              <small className="mt-2 block text-center text-[11px] leading-5 opacity-55">
-                WhatsApp opens with your enquiry pre-filled. No email is
-                required.
-              </small>
-            </form>
-          </div>
+            <ArrowLeft size={22} />
+          </button>
+          <figure onClick={(e) => e.stopPropagation()}>
+            <img src={`/img/${gallery[lightbox][0]}-1600.webp`} alt={gallery[lightbox][1]} />
+            <figcaption>{gallery[lightbox][1]}</figcaption>
+          </figure>
+          <button
+            className="lb-nav next"
+            type="button"
+            aria-label="Next photo"
+            onClick={(e) => {
+              e.stopPropagation();
+              setLightbox((i) => (i + 1) % gallery.length);
+            }}
+          >
+            <ArrowRight size={22} />
+          </button>
         </div>
       )}
 
-      {/* =====================================================
-          LIGHTBOX
-          ===================================================== */}
-
-      {activeImage && (
-        <div
-          className="lightbox"
-          onMouseDown={(e) => {
-            if (e.target === e.currentTarget) {
-              setActiveImage(null);
-            }
-          }}
-        >
-          <button
-            type="button"
-            onClick={() => setActiveImage(null)}
-            className="lightbox-close"
-            aria-label="Close image"
-          >
-            ×
-          </button>
-
-          <img src={`${A}${activeImage.src}`} alt={activeImage.title} />
-
-          <div>
-            <small>{activeImage.tag}</small>
-
-            <h3>{activeImage.title}</h3>
+      {/* ============ BOOKING MODAL ============ */}
+      {bookingOpen && (
+        <div className="modal" role="dialog" aria-modal="true" aria-labelledby="booking-title" onMouseDown={(e) => e.target === e.currentTarget && setBookingOpen(false)}>
+          <div className="modal-card">
+            <button className="modal-close" type="button" onClick={() => setBookingOpen(false)} aria-label="Close enquiry form">
+              <X size={20} />
+            </button>
+            <Tag>Enquiry</Tag>
+            <h2 id="booking-title">Plan your visit</h2>
+            <p className="muted">Tell us what you need — your enquiry opens in WhatsApp, ready to send.</p>
+            <form onSubmit={submitBooking}>
+              <div className="form-row">
+                <label>
+                  <span>Your name</span>
+                  <input name="name" required autoComplete="name" placeholder="Full name" />
+                </label>
+                <label>
+                  <span>Phone / WhatsApp</span>
+                  <input name="phone" required type="tel" autoComplete="tel" placeholder="+91" />
+                </label>
+              </div>
+              <fieldset>
+                <legend>What are you looking for?</legend>
+                <div className="chips">
+                  {enquiryOptions.map((opt) => (
+                    <button
+                      key={opt}
+                      type="button"
+                      className={selected.includes(opt) ? "active" : ""}
+                      aria-pressed={selected.includes(opt)}
+                      onClick={() => toggleOption(opt)}
+                    >
+                      {selected.includes(opt) && <Check size={14} strokeWidth={3} />}
+                      {opt}
+                    </button>
+                  ))}
+                </div>
+                {formError && <p className="form-error">{formError}</p>}
+              </fieldset>
+              <div className="form-row">
+                <label>
+                  <span>Preferred date</span>
+                  <input name="date" type="date" />
+                </label>
+                <label>
+                  <span>Guests</span>
+                  <input name="guests" type="number" min="1" placeholder="e.g. 20" />
+                </label>
+              </div>
+              <label>
+                <span>Message</span>
+                <textarea name="message" rows="3" placeholder="Anything else we should know?" />
+              </label>
+              <button className="arrow-btn dark full" type="submit">
+                <span>Send on WhatsApp</span>
+                <i aria-hidden="true">
+                  <ArrowUpRight size={16} strokeWidth={2.2} />
+                </i>
+              </button>
+            </form>
           </div>
         </div>
       )}
@@ -1885,10 +1187,4 @@ function App() {
   );
 }
 
-const rootElement = document.getElementById("root");
-
-if (!rootElement._reactRoot) {
-  rootElement._reactRoot = createRoot(rootElement);
-}
-
-rootElement._reactRoot.render(<App />);
+createRoot(document.getElementById("root")).render(<App />);
