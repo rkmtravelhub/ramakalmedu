@@ -893,7 +893,7 @@ function App() {
                 <article className="team-card" key={m.id}>
                   <div className="team-photo">
                     {m.photo ? (
-                      <img src={`/img/team/${m.id}.webp`} alt={m.name} width="640" height="800" loading="lazy" decoding="async" />
+                      <img src={`/img/team/${m.id}.webp?v=2`} alt={m.name} width="640" height="800" loading="lazy" decoding="async" />
                     ) : (
                       <div className="team-placeholder" aria-label={`Photo of ${m.name} coming soon`}>
                         <span>{initials(m.name)}</span>
