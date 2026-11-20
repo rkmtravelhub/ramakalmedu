@@ -24,4 +24,7 @@ export const IMG = {
   "ramakalmedu_tortoise": { s: [800, 600], l: [1600, 1200] },
   "ramakalmedu_windmills": { s: [800, 600], l: [1280, 960] },
   "ramakalmedu_windmills_elevated_view": { s: [800, 995], l: [1080, 1342] },
+  "ramakalmedu_jeeps_signboard": { s: [800, 600], l: [1600, 1200] },
+  "ramakalmedu_jeep_tourism_entrance": { s: [800, 600], l: [1600, 1200] },
+  "rkm_travel_hub_board": { s: [800, 600], l: [1600, 1200] },
 };

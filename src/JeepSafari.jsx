@@ -50,6 +50,11 @@ const stops = [
     text: "Green hills, rocky climbs and quiet viewpoints that are hard to reach without a 4×4.",
     img: "ramakalmedu_offroad_view",
   },
+  {
+    title: "Ramakkalmedu Tourism Project gate",
+    text: "Safari jeeps by the main tourism gate, with the Ramakkal rock rising right above the road.",
+    img: "ramakalmedu_jeep_tourism_entrance",
+  },
 ];
 
 const goodToKnow = [
@@ -172,8 +177,8 @@ export default function JeepSafari() {
         <section className="hero sub" id="top">
           <div className="hero-frame">
             <Photo
-              name="ramakalmedu_offroad_view"
-              alt="Red-earth off-road track through the green hills of Ramakkalmedu"
+              name="ramakalmedu_jeeps_signboard"
+              alt="Off-road safari jeeps lined up beside the Ramakkalmedu signboard"
               sizes="100vw"
               eager
               className="hero-img"

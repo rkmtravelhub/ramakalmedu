@@ -143,7 +143,7 @@ const places = [
     title: "Off-road Trails",
     preset: "Jeep safari",
     tag: "Jeep Safari",
-    img: "ramakalmedu_offroad_view",
+    img: "ramakalmedu_jeeps_signboard",
     text: "Red-earth tracks and green hills — ideal for a local jeep safari.",
   },
   {
@@ -191,7 +191,7 @@ const experienceCards = [
 const whyUs = [
   {
     title: "Built for group travel",
-    img: "RamaKalMedu_RKM_Travel_Hub",
+    img: "rkm_travel_hub_board",
     text: "A convenient stop for tourist buses and vans, with clean toilets and bathrooms, FreshUp rooms and food for the whole group.",
   },
   {
@@ -201,7 +201,7 @@ const whyUs = [
   },
   {
     title: "Local adventures, sorted",
-    img: "ramakalmedu_offroad_view",
+    img: "ramakalmedu_jeeps_signboard",
     text: "Jeep safari booking support, Tortoise Rock, windmill and vineyard visits, plus tourist information to plan your day.",
   },
   {
@@ -212,7 +212,7 @@ const whyUs = [
 ];
 
 const stays = [
-  ["Dormitory", "Group-friendly, practical accommodation for tours, schools and families.", "RamaKalMedu_RKM_Travel_Hub"],
+  ["Dormitory", "Group-friendly, practical accommodation for tours, schools and families.", "rkm_travel_hub_board"],
   ["Tent Stay", "A closer-to-nature outdoor option, perfect with a campfire night.", "20260927_065544"],
   ["Homestay", "A relaxed, local-style stay for travellers wanting a longer experience.", "RamaKalMedu_view"],
 ];
@@ -256,6 +256,9 @@ const dayPlans = {
 
 const gallery = [
   ["RamaKalMedu_Nature_view_WM1", "Ramakalmedu panorama"],
+  ["rkm_travel_hub_board", "RKM Travel Hub – FreshUp & Dormitory"],
+  ["ramakalmedu_jeeps_signboard", "Safari jeeps at Ramakkalmedu"],
+  ["ramakalmedu_jeep_tourism_entrance", "Jeeps at the Ramakkalmedu Tourism Project entrance"],
   ["ramakalmedu_rock_view", "Ramakalmedu rock"],
   ["ramakalmedu_windmills", "Windmills on the ridge"],
   ["ramakalmedu_tamilnadu_longview", "Tamil Nadu farmlands"],
