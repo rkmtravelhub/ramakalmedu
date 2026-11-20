@@ -32,6 +32,8 @@ import {
   Wifi,
   Wind,
   X,
+  Facebook,
+  Instagram,
 } from "lucide-react";
 import { IMG } from "./imageMeta";
 import { LogoMark } from "./Logo";
@@ -39,6 +41,23 @@ import "./styles.css";
 
 export const CONTACT = "919074685552";
 export const PHONE_DISPLAY = "+91 90746 85552";
+export const SOCIALS = [
+  ["Instagram", "https://www.instagram.com/ramakalmedu_tourist_hub/", Instagram],
+  ["Facebook", "https://www.facebook.com/profile.php?id=61595642515733", Facebook],
+];
+
+export function SocialLinks() {
+  return (
+    <div className="socials">
+      {SOCIALS.map(([label, href, Icon]) => (
+        <a key={label} href={href} target="_blank" rel="noopener noreferrer me" aria-label={`RKM Travel Hub on ${label}`}>
+          <Icon size={18} />
+        </a>
+      ))}
+    </div>
+  );
+}
+
 export const MAPS_URL =
   "https://www.google.com/maps/search/?api=1&query=Ramakalmedu%2C%20Idukki%2C%20Kerala";
 
@@ -1081,6 +1100,7 @@ function App() {
                 <small>RKM Travel Hub · Ramakalmedu, Idukki, Kerala</small>
               </span>
             </div>
+            <SocialLinks />
           </div>
           <nav aria-label="Footer">
             {nav.slice(1).map(([label, id]) =>

@@ -14,7 +14,7 @@ import {
   X,
 } from "lucide-react";
 import { LogoMark } from "./Logo";
-import { ArrowBtn, CONTACT, MAPS_URL, PHONE_DISPLAY, Photo, SectionHead, Tag, digits, initials, team } from "./App";
+import { ArrowBtn, CONTACT, MAPS_URL, PHONE_DISPLAY, Photo, SectionHead, SocialLinks, Tag, digits, initials, team } from "./App";
 
 /* Ramakkalmedu Jeep Safari — a dedicated page so search engines and AI
    assistants can match "Ramakkalmedu jeep safari" searches to RKM. */
@@ -360,6 +360,7 @@ export default function JeepSafari() {
                 <small>RKM Travel Hub · Ramakalmedu, Idukki, Kerala</small>
               </span>
             </a>
+            <SocialLinks />
           </div>
           <nav aria-label="Footer">
             {nav.slice(1).map(([label, href]) => (
