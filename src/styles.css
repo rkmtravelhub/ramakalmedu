@@ -266,7 +266,8 @@ p {
   border: 1px solid rgba(255, 255, 255, 0.18);
   backdrop-filter: blur(12px);
 }
-.pill-nav button {
+.pill-nav button,
+.pill-nav a {
   padding: 8px 16px;
   border-radius: 999px;
   color: #fff;
@@ -274,7 +275,8 @@ p {
   font-weight: 500;
   transition: background 0.2s ease, color 0.2s ease;
 }
-.pill-nav button:hover {
+.pill-nav button:hover,
+.pill-nav a:hover {
   background: #fff;
   color: var(--ink);
 }
@@ -282,10 +284,12 @@ p {
   background: var(--surface);
   border-color: var(--line);
 }
-.header.is-solid .pill-nav button {
+.header.is-solid .pill-nav button,
+.header.is-solid .pill-nav a {
   color: var(--ink);
 }
-.header.is-solid .pill-nav button:hover {
+.header.is-solid .pill-nav button:hover,
+.header.is-solid .pill-nav a:hover {
   background: var(--ink);
   color: #fff;
 }
@@ -335,7 +339,8 @@ p {
   display: flex;
   flex-direction: column;
 }
-.mobile-menu nav button {
+.mobile-menu nav button,
+.mobile-menu nav a {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -1359,12 +1364,14 @@ p {
   flex-wrap: wrap;
   gap: 6px 20px;
 }
-.footer nav button {
+.footer nav button,
+.footer nav a {
   color: var(--muted);
   font-weight: 500;
   font-size: 14px;
 }
-.footer nav button:hover {
+.footer nav button:hover,
+.footer nav a:hover {
   color: var(--ink);
 }
 .footer-bottom {
@@ -1693,4 +1700,88 @@ p {
     transition: none !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* Page links inside navs (e.g. Jeep Safari page) */
+.pill-nav a,
+.mobile-menu nav a,
+.footer nav a {
+  text-decoration: none;
+}
+.pill-nav a[aria-current="page"] {
+  background: #fff;
+  color: var(--ink);
+}
+.header.is-solid .pill-nav a[aria-current="page"] {
+  background: var(--ink);
+  color: #fff;
+}
+
+/* ---------- Jeep Safari page ---------- */
+.hero.sub .hero-frame {
+  min-height: max(560px, min(86svh, 820px));
+}
+.crumbs {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.82);
+  margin-bottom: 14px;
+}
+.crumbs a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+}
+.hero-actions a.ghost-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+}
+.know-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+}
+.know-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg, 22px);
+  padding: 24px;
+}
+.know-card svg {
+  color: var(--forest);
+}
+.know-card h3 {
+  margin: 14px 0 6px;
+  font-size: 18px;
+}
+.know-card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.55;
+}
+.team-grid.two {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  max-width: 820px;
+  margin-inline: auto;
+}
+@media (max-width: 1100px) {
+  .know-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 760px) {
+  .know-grid,
+  .team-grid.two {
+    grid-template-columns: 1fr;
+  }
+}
+a.mini-btn,
+a.wa-float,
+a.brand {
+  text-decoration: none;
 }

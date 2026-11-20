@@ -37,16 +37,16 @@ import { IMG } from "./imageMeta";
 import { LogoMark } from "./Logo";
 import "./styles.css";
 
-const CONTACT = "919074685552";
-const PHONE_DISPLAY = "+91 90746 85552";
-const MAPS_URL =
+export const CONTACT = "919074685552";
+export const PHONE_DISPLAY = "+91 90746 85552";
+export const MAPS_URL =
   "https://www.google.com/maps/search/?api=1&query=Ramakalmedu%2C%20Idukki%2C%20Kerala";
 
 /* ---------------------------------------------------------------
    Responsive, lazy-loaded WebP image.
    Every photo has an 800px and a 1600px version in /public/img.
    --------------------------------------------------------------- */
-function Photo({ name, alt, sizes = "(max-width: 760px) 100vw, 50vw", eager = false, className = "" }) {
+export function Photo({ name, alt, sizes = "(max-width: 760px) 100vw, 50vw", eager = false, className = "" }) {
   const meta = IMG[name];
   const [w, h] = meta ? meta.s : [800, 600];
   const srcSet = meta
@@ -75,6 +75,7 @@ const nav = [
   ["Home", "home"],
   ["Explore", "explore"],
   ["Experiences", "experiences"],
+  ["Jeep Safari", "/jeep-safari/"],
   ["Stay", "stay"],
   ["Facilities", "facilities"],
   ["Gallery", "gallery"],
@@ -271,7 +272,7 @@ const faqs = [
 
 /* Team — details from the printed RKM visiting cards.
    To add a photo later: save it as public/img/team/<id>.webp and set photo: true. */
-const team = [
+export const team = [
   {
     id: "anjith",
     name: "Anjith Chatterji",
@@ -295,8 +296,8 @@ const team = [
   },
 ];
 
-const digits = (p) => p.replace(/[^0-9]/g, "");
-const initials = (n) =>
+export const digits = (p) => p.replace(/[^0-9]/g, "");
+export const initials = (n) =>
   n
     .split(" ")
     .map((w) => w[0])
@@ -323,11 +324,11 @@ const enquiryOptions = [
 /* ---------------------------------------------------------------
    Small building blocks
    --------------------------------------------------------------- */
-function Tag({ children, light = false }) {
+export function Tag({ children, light = false }) {
   return <span className={`tag ${light ? "tag-light" : ""}`}>{children}</span>;
 }
 
-function ArrowBtn({ children, onClick, variant = "dark", type = "button", href }) {
+export function ArrowBtn({ children, onClick, variant = "dark", type = "button", href }) {
   const inner = (
     <>
       <span>{children}</span>
@@ -350,7 +351,7 @@ function ArrowBtn({ children, onClick, variant = "dark", type = "button", href }
   );
 }
 
-function SectionHead({ tag, title, text, center = false }) {
+export function SectionHead({ tag, title, text, center = false }) {
   return (
     <div className={`section-head ${center ? "center" : ""}`}>
       <div>
@@ -493,11 +494,19 @@ function App() {
           </button>
 
           <nav className="pill-nav" aria-label="Main">
-            {nav.map(([label, id]) => (
-              <button key={id} type="button" onClick={() => scrollTo(id)}>
-                {label}
-              </button>
-            ))}
+            {nav
+              .filter(([, id]) => id !== "home")
+              .map(([label, id]) =>
+                id.startsWith("/") ? (
+                  <a key={id} href={id}>
+                    {label}
+                  </a>
+                ) : (
+                  <button key={id} type="button" onClick={() => scrollTo(id)}>
+                    {label}
+                  </button>
+                ),
+              )}
           </nav>
 
           <div className="header-cta">
@@ -534,12 +543,19 @@ function App() {
             </button>
           </div>
           <nav>
-            {nav.map(([label, id]) => (
-              <button key={id} type="button" onClick={() => scrollTo(id)}>
-                {label}
-                <ArrowRight size={18} />
-              </button>
-            ))}
+            {nav.map(([label, id]) =>
+              id.startsWith("/") ? (
+                <a key={id} href={id}>
+                  {label}
+                  <ArrowRight size={18} />
+                </a>
+              ) : (
+                <button key={id} type="button" onClick={() => scrollTo(id)}>
+                  {label}
+                  <ArrowRight size={18} />
+                </button>
+              ),
+            )}
           </nav>
           <ArrowBtn variant="light" onClick={() => { setMenuOpen(false); openBooking(); }}>
             Plan Your Visit
@@ -1067,11 +1083,17 @@ function App() {
             </div>
           </div>
           <nav aria-label="Footer">
-            {nav.slice(1).map(([label, id]) => (
-              <button key={id} type="button" onClick={() => scrollTo(id)}>
-                {label}
-              </button>
-            ))}
+            {nav.slice(1).map(([label, id]) =>
+              id.startsWith("/") ? (
+                <a key={id} href={id}>
+                  {label}
+                </a>
+              ) : (
+                <button key={id} type="button" onClick={() => scrollTo(id)}>
+                  {label}
+                </button>
+              ),
+            )}
           </nav>
         </div>
         <div className="container footer-bottom">
