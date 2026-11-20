@@ -1,0 +1,1 @@
+import{E as e,T as t,p as n,t as r}from"./App-Bbu2Ktra.js";e();var i=t(),a=n(),o=document.getElementById(`root`);o.hasChildNodes()?(0,i.hydrateRoot)(o,(0,a.jsx)(r,{})):(0,i.createRoot)(o).render((0,a.jsx)(r,{}));
